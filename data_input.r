@@ -52,4 +52,4 @@ o <- hash(auths, c(h, h, h, h, h))
 ############################################################################
 #VISUALIZACION DE DATOS
 auths_count <- as.data.frame(table(ASCL$artist)) #contabilidad de el numero de veces que aparece cada autor en el dataframe
-plot(auths_count)  #visualizacion de los datos antes de agrupar
+plot(auths_count) #visualizacion de los datos antes de agrupar
