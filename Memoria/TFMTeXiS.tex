@@ -24,7 +24,9 @@
 % Para la bibliografía, además, se necesitan:
 %
 %       *.bib : ficheros con la información de las referencias
-%
+%Si quieres cambiar el \textbf{estilo del título} de los capítulos, abre el fichero \verb|TeXiS\TeXiS_pream.tex| y comenta la línea \verb|\usepackage[Lenny]{fncychap}| para dejar el estilo básico de \LaTeX.
+
+%Si no te gusta que no haya \textbf{espacios entre párrafos} y quieres dejar un pequeño espacio en blanco, no metas saltos de línea (\verb|\\|) al final de los párrafos. En su lugar, busca el comando  \verb|\setlength{\parskip}{0.2ex}| en \verb|TeXiS\TeXiS_pream.tex| y aumenta el valor de $0.2ex$ a, por ejemplo, $1ex$.
 % ---------------------------------------------------------------------
 
 \documentclass[11pt,a4paper,twoside]{book}
@@ -136,36 +138,17 @@ constantes,guionado,Cascaras/bibliografia,config%
 \pagestyle{fancy}
 \restauraCabecera
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Si el TFM se escribe en ingles, comentar las siguientes líneas 
-% porque no hace falta incluir nuevamente la Introducción en inglés
-\begin{otherlanguage}{english}
-\include{Capitulos/Introduction}
-\end{otherlanguage}
-\addtocounter{chapter}{-1} 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \include{Capitulos/Introduccion}
-\include{Capitulos/EstadoDeLaCuestion}
-%\include{Capitulos/Capitulo3}
-%\include{Capitulos/Capitulo4}
-%\include{Capitulos/Capitulo5}
+\include{Capitulos/Objetivos}
+\include{Capitulos/Metodologia}
+\include{Capitulos/Implementacion}
+\include{Capitulos/ResultadosyEvaluacion}
 \include{Capitulos/ConclusionesTrabajoFuturo}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Si el TFM se escribe en inglés, comentar las siguientes líneas 
-% porque no es necesario incluir nuevamente las Conclusiones en inglés
-\setcounter{chapter}{\thechapter-1} 
-\begin{otherlanguage}{english}
-\include{Capitulos/ConclusionsFutureWork}
-\end{otherlanguage}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 % Apéndices
 \appendix
-\include{Apendices/appendixA}
-\include{Apendices/appendixB}
+%\include{Apendices/appendixA}
+%\include{Apendices/appendixB}
 %\include{Apendices/appendixC}
 %\include{...}
 %\include{...}
