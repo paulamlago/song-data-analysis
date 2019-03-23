@@ -6,13 +6,13 @@
 \contentsline {chapter}{\numberline {3}Metodolog\IeC {\'\i }a}{5}{chapter.4}
 \contentsline {chapter}{\numberline {4}Implementaci\'on}{7}{chapter.5}
 \contentsline {section}{\numberline {4.1}Desarrollo de la aplicaci\IeC {\'o}n}{7}{section.6}
-\contentsline {section}{\numberline {4.2}Creaci\IeC {\'o}n del conjunto de datos final}{7}{section.7}
-\contentsline {section}{\numberline {4.3}Limpieza y preprocesamiento de los datos}{7}{section.8}
-\contentsline {section}{\numberline {4.4}Transformaci\IeC {\'o}n de los datos}{7}{section.9}
-\contentsline {section}{\numberline {4.5}Elecci\IeC {\'o}n de la tarea de minado adecuada}{7}{section.10}
-\contentsline {section}{\numberline {4.6}Eleecci\IeC {\'o}n del algoritmo de miner\IeC {\'\i }a de datos}{7}{section.11}
-\contentsline {section}{\numberline {4.7}Aplicaci\IeC {\'o}n del algoritmo elegido}{7}{section.12}
-\contentsline {section}{\numberline {4.8}Interpretaci\IeC {\'o}n de los resultados}{7}{section.13}
-\contentsline {section}{\numberline {4.9}Aplicaci\IeC {\'o}n de los resultados obtenidos}{7}{section.14}
-\contentsline {chapter}{\numberline {5}Resultados y Evaluaci\IeC {\'o}n}{9}{chapter.15}
-\contentsline {chapter}{\numberline {6}Conclusiones y Trabajo Futuro}{11}{chapter.16}
+\contentsline {section}{\numberline {4.2}Creaci\IeC {\'o}n del conjunto de datos}{7}{section.7}
+\contentsline {section}{\numberline {4.3}Limpieza y preprocesamiento de los datos}{8}{section.12}
+\contentsline {section}{\numberline {4.4}Transformaci\IeC {\'o}n de los datos}{9}{section.13}
+\contentsline {section}{\numberline {4.5}Elecci\IeC {\'o}n de la tarea de minado adecuada}{9}{section.14}
+\contentsline {section}{\numberline {4.6}Eleecci\IeC {\'o}n del algoritmo de miner\IeC {\'\i }a de datos}{9}{section.15}
+\contentsline {section}{\numberline {4.7}Aplicaci\IeC {\'o}n del algoritmo elegido}{9}{section.16}
+\contentsline {section}{\numberline {4.8}Interpretaci\IeC {\'o}n de los resultados}{9}{section.17}
+\contentsline {section}{\numberline {4.9}Aplicaci\IeC {\'o}n de los resultados obtenidos}{9}{section.18}
+\contentsline {chapter}{\numberline {5}Resultados y Evaluaci\IeC {\'o}n}{11}{chapter.19}
+\contentsline {chapter}{\numberline {6}Conclusiones y Trabajo Futuro}{13}{chapter.20}
