@@ -4,22 +4,23 @@ install.packages("tm") # Si no funciona la instalación, probar instalando antes
 install.packages("SnowballC")
 install.packages("rlist")
 install.packages("hash")
+install.packages("ngram")
 library(tm)
 library(hash) #para crear y operar con estructuras hash
 library(stringr)
 library(stringi)
-
+library(ngram)
 #primer dataset: songdata.csv
-ASCL <- read.csv(paste(getwd(), "/Data/songlyrics/songdata.csv", sep = ""), header = TRUE, sep = ",", nrows = 5, colClasses = c(NA, NA, "NULL", NA))
+ASCL <- read.csv(paste(getwd(), "/songdata.csv", sep = ""), header = TRUE, sep = ",", colClasses = c(NA, NA, "NULL", NA))
 #la tercera columna son las letras
 names(ASCL)[3] <- "lyrics"
 #segundo dataset: lyrics.csv
-aux <- read.csv(paste(getwd(), "/Data/songlyrics/lyrics.csv", sep = ""), header = TRUE, sep = ",", nrows = 5, colClasses = c("NULL", NA, "NULL", NA, "NULL", NA))
+aux <- read.csv(paste(getwd(), "/lyrics.csv", sep = ""), header = TRUE, sep = ",", colClasses = c("NULL", NA, "NULL", NA, "NULL", NA))
 #mismo orden de columas que ASCL1
 aux <- aux[,c(2, 1, 3)]
 #concatenar los data frames
 ASCL <- rbind(ASCL, aux)
-
+rm(aux)
 # Convertimos a minúsculas cada palabra, no solo de la letra de las canciones, sino del nombre del grupo y canción
 #Problema -> Al hacer apply devuelve una lista en vez de un data.frame, así que volvemos a convertirlo a data.frame
 # la función t() devuelve la matriz transpuesta, ya que por alguna razón apply devuelve las columnas como filas y al revés
@@ -33,14 +34,21 @@ for(i in 1:length(ASCL))
 
 #############################################################################
 #dividir la string que contiene la letra en palabras
-words = unlist(stri_extract_all_words(ASCL[[3]][1]))
+words = unlist(stri_extract_all_words(ASCL[[3]]))
+words.freq <- table(words) #extraemos la frecuencia con la que aparece cada palabra
+words_data <-cbind.data.frame(names(words.freq),as.integer(words.freq)) #unimos palabras con frecuencias y combinamos
+names(words_data) <- c("word", "repetitions")
+words_data <- words_data[order(words_data$repetitions, decreasing = TRUE)[1:10], ] #Cogemos las 10 palabras con más apariciones
+
+pal <- colorRampPalette(colors = c("lightblue", "blue"))
+barplot(words_data$repetitions, names.arg = words_data$word, col = pal) #Las reflejamos en un gráfico
 #esta es la idea aunque no funciona:
 for(i in 1:length(ASCL[[3]])){
   words <- unlist(stri_extract_all_words(ASCL[[3]][i]))
   lyrics[i] <- words
 }
 #obtenemos las columnas del dataframe por separado para poder trabajar y crear el hash
-auths <- levels(ASCL[[1]])
+auths <- ASCL[[1]]
 sNames <- ASCL[[2]]
 lyrics <- rep(list("character"), length(ASCL[[3]]))
 #en este ejemplo creamos un hash con clave el nombre de autor
