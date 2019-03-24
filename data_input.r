@@ -32,11 +32,11 @@ get_existing_words <- function(x){ #Tarda mucho :(
 ##############################################################################################################################
 
 #primer dataset: songdata.csv
-ASCL <- read.csv(paste(getwd(), "/songdata.csv", sep = ""), header = TRUE, nrows = 300, sep = ",", colClasses = c(NA, NA, "NULL", NA))
+ASCL <- read.csv(paste(getwd(), "/songdata.csv", sep = ""), header = TRUE, sep = ",", colClasses = c(NA, NA, "NULL", NA))
 #la tercera columna son las letras
 names(ASCL)[3] <- "lyrics"
 #segundo dataset: lyrics.csv
-aux <- read.csv(paste(getwd(), "/lyrics.csv", sep = ""), header = TRUE, nrows = 300, sep = ",", colClasses = c("NULL", NA, "NULL", NA, "NULL", NA))
+aux <- read.csv(paste(getwd(), "/lyrics.csv", sep = ""), header = TRUE, sep = ",", colClasses = c("NULL", NA, "NULL", NA, "NULL", NA))
 #mismo orden de columas que ASCL1
 aux <- aux[,c(2, 1, 3)]
 #concatenar los data frames
@@ -51,19 +51,31 @@ ASCL[,3] <- removeWords(as.character(ASCL[,3]), words = c(stopwords("english"), 
 ASCL[,3] <- stripWhitespace(ASCL[,3])
 ASCL[,3] <- removePunctuation(ASCL[,3])
 ASCL[,3] <- removeNumbers(ASCL[,3]) # Por si acaso
-
-existing_words_in_all_set <- get_existing_words(ASCL[,3]) #Esta línea debería sustituir todas las de arriba, además comprueba palabras en inglés y castellano siempre en minusuclas
-
 #for(i in 1:length(ASCL))
 #  ASCL[i] <- lapply(ASCL[i],toupper) #pasar el dataframe a mayusc
 #############################################################################
-
-#dividir la string que contiene la letra en palabras
+### Get all different words in the whole dataset ###
+existing_words_in_all_set <- get_existing_words(ASCL[,3]) #comprueba palabras en inglés y castellano siempre en minusuclas
 words.freq <- table(existing_words_in_all_set)#extraemos la frecuencia con la que aparece cada palabra
 words_data <- cbind.data.frame(names(words.freq),as.integer(words.freq)) #unimos palabras con frecuencias y combinamos
 names(words_data) <- c("word", "repetitions")
 words_data <- words_data[order(words_data$repetitions, decreasing = TRUE)[1:10], ] #Cogemos las 10 palabras con más apariciones
-
+### Get words from a certain band
+queen_songs <- ASCL[ASCL[1] == "queen",,]
+for(song in queen_songs){ #Veremos las palabras más utilizadas en cada canción
+  song_lyric <- get_existing_words(song[3])
+  words.freq <- table(song_lyric)
+  words_data <- cbind.data.frame(names(words.freq),as.integer(words.freq))
+  names(words_data) <- c("word", "repetitions")
+  words_data <- words_data[order(words_data$repetitions, decreasing = TRUE)[1:15], ] #Cogemos las 10 palabras con más apariciones
+  barplot(words_data$repetitions, 
+          names.arg = words_data$word,
+          col = pal,
+          xlab = "Words",
+          ylab = "Repetitions"
+          #main = song[2]
+          )
+}
 #esta es la idea aunque no funciona:
 #for(i in 1:length(ASCL[[3]])){
 #  words <- unlist(stri_extract_all_words(ASCL[[3]][i]))
