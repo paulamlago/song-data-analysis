@@ -62,20 +62,47 @@ names(words_data) <- c("word", "repetitions")
 words_data <- words_data[order(words_data$repetitions, decreasing = TRUE)[1:10], ] #Cogemos las 10 palabras con más apariciones
 ### Get words from a certain band
 queen_songs <- ASCL[ASCL[1] == "queen",,]
-for(song in queen_songs){ #Veremos las palabras más utilizadas en cada canción
-  song_lyric <- get_existing_words(song[3])
+queen_songs <- data.frame(queen_songs[2],queen_songs[3]) #We don't need the band name
+#Choose certain songs to explore
+songs_to_select <- which(queen_songs$song %in% c("love of my life", "somebody to love", "bohemian rhapsody", "killer queen", "the show must go on"))
+queen_songs_selected <- queen_songs[songs_to_select,]
+pal <- colorRampPalette(colors = c("blue", "lightblue"))(length(words_data[[1]]))
+for(s in 1:nrow(queen_songs_selected)){ #Veremos las palabras más utilizadas en cada canción
+  song <- queen_songs_selected[s,,]
+  print(song$song)
+  song_lyric <- get_existing_words(song$lyrics)
   words.freq <- table(song_lyric)
   words_data <- cbind.data.frame(names(words.freq),as.integer(words.freq))
   names(words_data) <- c("word", "repetitions")
-  words_data <- words_data[order(words_data$repetitions, decreasing = TRUE)[1:15], ] #Cogemos las 10 palabras con más apariciones
+  words_data <- words_data[order(words_data$repetitions, decreasing = TRUE)[1:10], ] #Cogemos las 10 palabras con más apariciones
+  fname <- paste("/home/paulamlago/Documents/Uni/MIN/Analisis-de-letras-de-canciones/", str_replace_all(song$song, " ",""), ".png", sep="")
+  png(filename = fname)
   barplot(words_data$repetitions, 
           names.arg = words_data$word,
           col = pal,
           xlab = "Words",
-          ylab = "Repetitions"
-          #main = song[2]
-          )
+          ylab = "Repetitions",
+          main =song$song,
+          las = 2)
+  dev.off()
 }
+#Visualize the most used words from that band
+queen_most_used_words <- get_existing_words(queen_songs$lyrics)
+words.freq <- table(queen_most_used_words)
+words_data <- cbind.data.frame(names(words.freq),as.integer(words.freq))
+names(words_data) <- c("word", "repetitions")
+pal <- colorRampPalette(colors = c("orange", "white"))(length(words_data[[1]]))
+words_data <- words_data[order(words_data$repetitions, decreasing = TRUE)[1:15], ] #Cogemos las 15 palabras con más apariciones
+fname <- paste("/home/paulamlago/Documents/Uni/MIN/Analisis-de-letras-de-canciones/queen_most_used_words", ".png", sep="")
+png(filename = fname)
+barplot(words_data$repetitions, 
+        names.arg = words_data$word,
+        col = pal,
+        xlab = "Words",
+        ylab = "Repetitions",
+        las = 2)
+dev.off()
+
 #esta es la idea aunque no funciona:
 #for(i in 1:length(ASCL[[3]])){
 #  words <- unlist(stri_extract_all_words(ASCL[[3]][i]))
