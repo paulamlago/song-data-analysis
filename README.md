@@ -26,3 +26,7 @@ get_existing_words <- function(x){
 ```
 # Visualiación
 Con el fin de entender cómo están estructurados los datos en el dataset obtenido, hemos visualizado las palabras más utilizadas en las canciones más conocidas de Queen.
+![alt text](https://github.com/paulamlago/Analisis-de-letras-de-canciones/blob/master/Memoria/Imagenes/AnotherOneBitesTheDust.png)
+Cualquier persona que haya escuchado esta canción puede corroborar que efectivamente, esas son las palabras más utilizadas. Otros ejemplos pueden verse en las siguientes imágenes.
+![alt text](https://github.com/paulamlago/Analisis-de-letras-de-canciones/blob/master/Memoria/Imagenes/killerqueen.png)
+![alt text](https://github.com/paulamlago/Analisis-de-letras-de-canciones/blob/master/Memoria/Imagenes/loveofmylife.png)
