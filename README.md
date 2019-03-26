@@ -1,12 +1,5 @@
 # Analisis de las letras de las canciones por país de procedencia
 Proyecto para la asignatura Minería de datos y el paradigma del Big Data desarrollado en el curso 2018/2019. El objetivo es estudiar las palabras presentes en las letras de las canciones de cada país para conseguir extraer un sentimiento general presente en dicho país.
-<ul>
-  {% for post in site.posts %}
-    <li>
-      <a href="{{ post.url }}">{{ post.title }}</a>
-    </li>
-  {% endfor %}
-</ul>
 
 ## Conjunto de datos
 Para la realización del estudio, obtendremos la información de https://www.kaggle.com/. Los conjuntos a utilizar serán: 
