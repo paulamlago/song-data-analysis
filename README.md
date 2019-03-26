@@ -31,4 +31,4 @@ Cualquier persona que haya escuchado esta canción puede corroborar que efectiva
 ![alt text](https://github.com/paulamlago/Analisis-de-letras-de-canciones/blob/master/Memoria/Imagenes/killerqueen.png)
 ![alt text](https://github.com/paulamlago/Analisis-de-letras-de-canciones/blob/master/Memoria/Imagenes/loveofmylife.png)
 Finalmente, tras visualizar los datos que podemos extraer de las canciones de un cierto grupo, elaboramos una gráfica obteniendo información de todas sus canciones. Como se aprecia, la palabra que más se repite en las canciones del grupo británico es amor.
-![alt text](https://github.com/paulamlago/Analisis-de-letras-de-canciones/blob/master/Memoria/Imagenes/queen_most_used_songs.png)
+![alt text](https://github.com/paulamlago/Analisis-de-letras-de-canciones/blob/master/Memoria/Imagenes/queen_most_used_words.png)
