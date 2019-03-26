@@ -6,6 +6,23 @@ Para la realización del estudio, obtendremos la información de https://www.kag
 * [Dataset 1](https://www.kaggle.com/mousehead/songlyrics)
 * [Dataset 2](https://www.kaggle.com/gyani95/380000-lyrics-from-metrolyrics)
 
-## Metodología a seguir
-Para encontrar el país de procedencia de cada autor(a), utilizaremos técnicas de minería web para obtener dicha información a través de Wikipedia u otras fuentes. Una vez obtenida la información (país, autor, letras de sus canciones), limpiaremos los datos escogiendo sólo las palabras más relevantes, siendo éstas los verbos, sustantivos y adjetivos, eliminando artículos, conjunciones.
-Una vez obtenido el conjunto de datos sobre el cual trabajar, extraemos la palabra más utilizada primero por artista y luego por país. Plantearemos y trabajaremos sobre la siguiente hipótesis: según la región, la temática de las canciones está orientada hacia un sentimiento predominante. Podremos comprobarlo si las palabras más utilizadas son del campo semántico.
+# Limpieza
+Puesto que las letras de las canciones contienen palabras que no son relevantes a la hora de extraer el significado y sentimiento general, hemos extraido las palabras "útiles", eliminando las llamadas "stopwords" del inglés. Además hemos desarrollado varias funciones, con el apoyo de la librería ```qdapDictionaries```. En primer lugar, "is.word" se encargará de devolver si la palabra que le pasamos como parámetro está en el diccionario de castellano o de ingés o no.
+```R
+is.word  <- function(x) x %in% GradyAugmented
+```
+En segundo lugar, haciendo uso de la función anterior, hemos desarrollado get_existing_words, que dada la lestra de una canción, solo devuelve aquellas palabras que existen en el diccionario. Esto nos es útil para eliminar coros y otras palabras que no nos son útiles que pueden aparecer en la letra.
+```R
+get_existing_words <- function(x){
+  lyric <- list()
+  all_words <- unlist(stri_extract_all_words(x))
+  for (w in all_words) {
+    if (is.word(w)){
+      lyric <- c(lyric, w)
+    }
+  }
+  return(unlist(lyric))
+}
+```
+# Visualiación
+Con el fin de entender cómo están estructurados los datos en el dataset obtenido, hemos visualizado las palabras más utilizadas en las canciones más conocidas de Queen.
