@@ -27,14 +27,45 @@ Un dato relevante en el desarrollo de ésta práctica del cual no disponemos a t
 \section{Limpieza y preprocesamiento de los datos}
 La limpiza de las letras es un paso crucial en el desarrollo de éste proyecto, puesto que muchas letras están compuestas de palabras que no aportan información relevante a la hora de realizar el análisis, como son los artículos, conjunciones, etc. Por ello, una vez obtenidos todos los datos, el paso siguiente será eliminar las llamadas \textit{stopwords}, tanto del inglés como del castellano. Éste conjunto de palabras está compuesto por los tipos comentados anteriormente, es decir, palabras que no aportan información al análisis. Para ello, hemos desarrollado una función en R que, dado un texto, extrae únicamente las palabras que se encuentran en el diccionario, tanto en el de inglés como en el de castellano.
 
-Como parte del preprocesamiento de los datos y con el fin de obtener una descripción más visual del set de datos obtenido, hemos realizado algunas pruebas. En primer lugar, hemos obtenido las palabras que aparecen en la canción \textit{Another One Bites the Dust}, de Queen, obteniendo el gráfico que se aprecia en la Figura \ref{fig:queen}.
-\begin{figure}
+Como parte del preprocesamiento de los datos y con el fin de obtener una descripción más visual del set de datos obtenido, hemos realizado algunas pruebas. En primer lugar, hemos obtenido las palabras que aparecen en las canciones más conocidas del grupo Queen.
+\begin{figure}[h]
 	\centering
 	\includegraphics[width=0.7\linewidth]{Imagenes/AnotherOneBitesTheDust}
 	\caption{\textit{Another One Bites the Dust} - Queen}
-	\label{fig:queen}
+	\label{fig:AnotherOneBitesTheDust}
+\end{figure}
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.7\linewidth]{Imagenes/loveofmylife}
+	\caption{\textit{Love Of My life} - Queen}
+	\label{fig:loveofmylife}
+\end{figure}
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.7\linewidth]{Imagenes/somebodytolove}
+	\caption{\textit{Somebody To Love} - Queen}
+	\label{fig:sbtl}	
+\end{figure}
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.7\linewidth]{Imagenes/bohemianrhapsody}
+	\caption{\textit{Bohemian Rhapsody} - Queen}
+	\label{fig:bohemianrhapsody}
+\end{figure}
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.7\linewidth]{Imagenes/theshowmustgoon}
+	\caption{\textit{The Show must go on} - Queen}
+	\label{fig:tsmgo}
 \end{figure}
 
+Finalmente, tras estudiar los gráficos obtenidos y ver que tiene sentido que las palabras más utilizadas en dichas canciones son las que se muestran, procedemos a generalizar un poco más nuestra exploración, para ver cuales son las palabras más utilizadas por el grupo británico. Como se muestra en la figura \ref{fig:queen_songs}, la palabra \textit{amor} aparece más de 400 veces en las canciones de las que disponemos de dicha banda.
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.7\linewidth]{Imagenes/queen_most_used_words}
+	\caption{Most used words by Queen}
+	\label{fig:queen_songs}
+\end{figure}
 
 \section{Transformación de los datos}
 \section{Elección de la tarea de minado adecuada}
