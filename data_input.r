@@ -117,6 +117,18 @@ lyrics <- rep(list("character"), length(ASCL[[3]]))
 h <- hash(ASCL[[2]], ASCL[[3]])
 #un hash como valor por cada autor como clave
 o <- hash(auths, c(h, h, h, h, h))
+############################################################################
+################### OBTENCIÓN DEL PAIS DE CADA AUTOR #######################
+install.packages("rvest")
+library(rvest)
+url <- "https://es.wikipedia.org/wiki/Queen"
+page <- read_html(url)
+htmltable <- html_table(page)[1]
+data <- as.data.frame(htmltable)[,-2]
+colnames(data)<- c("X1", "X2")
+origin_info <- data[which(grepl("Origen", data$X1)),2]
+origin_list <- unlist(strsplit(origin_info, ","))
+country <- trimws(origin_list[length(origin_list)])
 
 ############################################################################
 #VISUALIZACION DE DATOS
