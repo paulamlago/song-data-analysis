@@ -27,8 +27,13 @@ get_existing_words <- function(x){
 Con el fin de entender cómo están estructurados los datos en el dataset obtenido, hemos visualizado las palabras más utilizadas en las canciones más conocidas de Queen.
 
 ![alt text](/Memoria/Imagenes/AnotherOneBitesTheDust.png)
+
 Cualquier persona que haya escuchado esta canción puede corroborar que efectivamente, esas son las palabras más utilizadas. Otros ejemplos pueden verse en las siguientes imágenes.
-![img](/Memoria/Imagenes/killerqueen.png)
+
+![alt tex](/Memoria/Imagenes/killerqueen.png)
+
 ![alt tex](/Memoria/Imagenes/loveofmylife.png)
+
 Finalmente, tras visualizar los datos que podemos extraer de las canciones de un cierto grupo, elaboramos una gráfica obteniendo información de todas sus canciones. Como se aprecia, la palabra que más se repite en las canciones del grupo británico es amor.
+
 ![alt tex](/Memoria/Imagenes/queen_most_used_words.png)

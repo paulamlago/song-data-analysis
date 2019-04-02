@@ -117,7 +117,28 @@ lyrics <- rep(list("character"), length(ASCL[[3]]))
 h <- hash(ASCL[[2]], ASCL[[3]])
 #un hash como valor por cada autor como clave
 o <- hash(auths, c(h, h, h, h, h))
+############################################################################
+################### OBTENCIÓN DEL PAIS DE CADA AUTOR #######################
+install.packages("rvest")
+library(rvest)
 
+# La intención es recorrer los artistas, crear la url de Wikipedia, que no funciona
+#porque tiene que ser la primera letra mayúscula, aunque en el caso de abba tiene que
+#ser ABBA, por lo que en la lectura no debermos pasar los nombres de los grupos a minúscula!!
+#Además, en Wikipedia siempre está la etiqueta Origen, donde viene el país en último lugar
+#El código funciona para el ejemplo de Queen, tenemos que conseguir que funcione el bucle
+#y crear un nuevo data frame artista - país
+for(artist in ASCL[[1]]){
+  url <- paste("https://es.wikipedia.org/wiki/",artist)
+  page <- read_html(url)
+  htmltable <- html_table(page)[1]
+  data <- as.data.frame(htmltable)[,-2]
+  colnames(data)<- c("X1", "X2")
+  origin_info <- data[which(grepl("Origen", data$X1)),2]
+  origin_list <- unlist(strsplit(origin_info, ","))
+  country <- trimws(origin_list[length(origin_list)])
+  #meter el pais y el artista en un data frame
+}
 ############################################################################
 #VISUALIZACION DE DATOS
 auths_count <- as.data.frame(table(ASCL$artist)) #contabilidad de el numero de veces que aparece cada autor en el dataframe
