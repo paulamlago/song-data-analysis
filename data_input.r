@@ -32,11 +32,11 @@ get_existing_words <- function(x){ #Tarda mucho :(
 ##############################################################################################################################
 
 #primer dataset: songdata.csv
-ASCL <- read.csv(paste(getwd(), "/songdata.csv", sep = ""), header = TRUE, sep = ",", colClasses = c(NA, NA, "NULL", NA))
+ASCL <- read.csv(paste(getwd(), "/songdata.csv", sep = ""), header = TRUE, sep = ",", nrows = 200, colClasses = c(NA, NA, "NULL", NA))
 #la tercera columna son las letras
 names(ASCL)[3] <- "lyrics"
 #segundo dataset: lyrics.csv
-aux <- read.csv(paste(getwd(), "/lyrics.csv", sep = ""), header = TRUE, sep = ",", colClasses = c("NULL", NA, "NULL", NA, "NULL", NA))
+aux <- read.csv(paste(getwd(), "/lyrics.csv", sep = ""), header = TRUE, sep = ",", nrows = 200, colClasses = c("NULL", NA, "NULL", NA, "NULL", NA))
 #mismo orden de columas que ASCL1
 aux <- aux[,c(2, 1, 3)]
 #concatenar los data frames
