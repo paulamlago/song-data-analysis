@@ -1,8 +1,2 @@
 theme: jekyll-theme-cayman
 title: Song lyrics sentiment analysis
-logo: "https://data.whicdn.com/images/321539311/original.png?t=1540824503"
-navigation_header:
-  Home: /
-  About: /about/
-navigation_footer:
-  Back to top: "#top"
