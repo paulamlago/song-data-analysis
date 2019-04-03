@@ -1,6 +1,5 @@
 [About](about.md)
 
-
 ## Conjunto de datos
 Para la realización del estudio, obtendremos la información de https://www.kaggle.com/. Los conjuntos a utilizar serán: 
 * [Dataset 1](https://www.kaggle.com/mousehead/songlyrics)
