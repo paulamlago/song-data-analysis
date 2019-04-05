@@ -8,7 +8,11 @@ install.packages("ngram")
 install.packages("qdapDictionaries")
 install.packages("wordcloud")
 install.packages("RColorBrewer")
-
+install.packages("RCurl")
+install.packages("countrycode")
+install.packages("rvest")
+library(rvest)
+library(countrycode)
 library(RColorBrewer)
 library(wordcloud)
 library(tm)
@@ -17,7 +21,7 @@ library(stringr)
 library(stringi)
 library(ngram)
 library(qdapDictionaries)
-
+library(RCurl)
 ###############################################################################################################################
 ##################################################DECLARACIÓN DE FUNCIONES#####################################################
 #Comprobamos si la palabra está en el diccionario
@@ -33,14 +37,22 @@ get_existing_words <- function(x){ #Tarda mucho :(
   }
   return(unlist(lyric))
 }
+
+get_country <- function(country_list, origin){
+  for (country in country_list){
+    if (grepl(country, origin)){
+      return(country)
+    }
+  }
+}
 ##############################################################################################################################
 
 #primer dataset: songdata.csv
-ASCL <- read.csv(paste(getwd(), "/Data/songlyrics/songdata.csv", sep = ""), header = TRUE, sep = ",", nrows = 200, colClasses = c(NA, NA, "NULL", NA))
+ASCL <- read.csv(paste(getwd(), "/songdata.csv", sep = ""), header = TRUE, sep = ",", nrows = 200, colClasses = c(NA, NA, "NULL", NA))
 #la tercera columna son las letras
 names(ASCL)[3] <- "lyrics"
 #segundo dataset: lyrics.csv
-aux <- read.csv(paste(getwd(), "/Data/songlyrics/lyrics.csv", sep = ""), header = TRUE, sep = ",", nrows = 200, colClasses = c("NULL", NA, "NULL", NA, "NULL", NA))
+aux <- read.csv(paste(getwd(), "/lyrics.csv", sep = ""), header = TRUE, sep = ",", nrows = 200, colClasses = c("NULL", NA, "NULL", NA, "NULL", NA))
 #mismo orden de columas que ASCL1
 aux <- aux[,c(2, 1, 3)]
 #concatenar los data frames
@@ -109,31 +121,38 @@ dev.off()
 
 ############################################################################
 ################### OBTENCIÓN DEL PAIS DE CADA AUTOR #######################
-install.packages("rvest")
-library(rvest)
+existing_countries <- countrycode::codelist$cldr.name.es #Todos los países en castellano, para matchearlo con las string que obtengamos
+#Extraer la lista de países, ahora están en una string
 
-# La intención es recorrer los artistas, crear la url de Wikipedia, que no funciona
+#La intención es recorrer los artistas, crear la url de Wikipedia, que no funciona
 #porque tiene que ser la primera letra mayúscula, aunque en el caso de abba tiene que
 #ser ABBA, por lo que en la lectura no debermos pasar los nombres de los grupos a minúscula!!
 #Además, en Wikipedia siempre está la etiqueta Origen, donde viene el país en último lugar
 #El código funciona para el ejemplo de Queen, tenemos que conseguir que funcione el bucle
 #y crear un nuevo data frame artista - país
-artist_country <- list() #introducimos aquí el país de cada artista
 artists <- as.data.frame(table(ASCL$artist)) #aquí van los artistas con su frecuencia en el dataframe
 artists[,1] <- str_replace_all(artists[,1],"Of","of") #queda pulir los artículos de los artistas
 artists[,1] <- str_replace_all(artists[,1]," ","_") #en las url los espacios se sustituyen por '_'
+artist_country <- data.frame(matrix(ncol=2, nrow=length(artists[[1]]))) #introducimos aquí el artista y el país de procedencia
+colnames(artist_country) <- c("Artist", "Country")
 
-for(Var1 in artists[[1]]){
-  url <- paste("https://es.wikipedia.org/wiki/", Var1)
-  page <- read_html(url)
-  htmltable <- html_table(page)[1]
-  data <- as.data.frame(htmltable)[,-2]
-  colnames(data)<- c("X1", "X2")
-  origin_info <- data[which(grepl("Origen", data$X1)),2]
-  origin_list <- unlist(strsplit(origin_info, ","))
-  country <- trimws(origin_list[length(origin_list)])
-  artist_country <- c(artist_country, country)
+for(i in 1:length(artists[[1]])){
+  pweb <- paste("https://es.wikipedia.org/wiki/", artists[i, 1], sep="")
+  if (url.exists(pweb)){
+    page <- read_html(pweb)
+    htmltable <- html_table(page)[1]
+    data <- as.data.frame(htmltable)[,-2]
+    origin_info <- data[which(grepl("Origen", data[[1]])),2]
+    country <- get_country(existing_countries, origin_info)
+    artist_country[i, ] <- c(artists[i, 1], country)
+  } else{
+    print("No information for ", artists[i, 1])
+  }
 }
+rm(data)
+rm(htmltable)
+rm(country)
+rm(origin_info)
 artists <- cbind(artists, artist_country)   #meter el pais y el artista en un data frame
 
 ############################################################################
