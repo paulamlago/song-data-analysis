@@ -38,27 +38,30 @@ get_existing_words <- function(x){ #Tarda mucho :(
   return(unlist(lyric))
 }
 
+split_country <- function(country, f_list){
+  return(f_list <- stri_extract_all_words(country)[[1]])
+}
+
 get_country <- function(country_list, origin){
-  for (country in country_list){
-    if (grepl(country, origin)){
-      return(country)
+  for (k in length(origin)) {
+    if(origin[k] %in% country_list){
+      return(origin[k])
     }
   }
 }
+
 ##############################################################################################################################
 
 #primer dataset: songdata.csv
-ASCL <- read.csv(paste(getwd(), "/songdata.csv", sep = ""), header = TRUE, sep = ",", nrows = 200, colClasses = c(NA, NA, "NULL", NA))
+ASCL <- read.csv(paste(getwd(), "/Data/songlyrics/songdata.csv", sep = ""), header = TRUE, sep = ",", nrows = 200, colClasses = c(NA, NA, "NULL", NA))
 #la tercera columna son las letras
 names(ASCL)[3] <- "lyrics"
 #segundo dataset: lyrics.csv
-aux <- read.csv(paste(getwd(), "/lyrics.csv", sep = ""), header = TRUE, sep = ",", nrows = 200, colClasses = c("NULL", NA, "NULL", NA, "NULL", NA))
-#mismo orden de columas que ASCL1
-aux <- aux[,c(2, 1, 3)]
-#concatenar los data frames
-ASCL<- rbind(ASCL, aux)
+aux <- read.csv(paste(getwd(), "/Data/songlyrics/lyrics.csv", sep = ""), header = TRUE, sep = ",", nrows = 200, colClasses = c("NULL", NA, "NULL", NA, "NULL", NA))
+aux <- aux[,c(2, 1, 3)]#mismo orden de columas que aux
+ASCL<- rbind(ASCL, aux)#concatenar los data frames
 rm(aux)
-# Convertimos a minúsculas cada palabra, no solo de la letra de las canciones, sino del nombre del grupo y canción
+# Convertimos a minúsculas cada palabra, no solo de la letra de las canciones, sino del título de la canción
 #Problema -> Al hacer apply devuelve una lista en vez de un data.frame, así que volvemos a convertirlo a data.frame
 # la función t() devuelve la matriz transpuesta, ya que por alguna razón apply devuelve las columnas como filas y al revés
 ASCL <- data.frame(ASCL)
@@ -79,6 +82,7 @@ words_data <- words_data[order(words_data$repetitions, decreasing = TRUE)[1:10],
 ### Get words from a certain band
 queen_songs <- ASCL[ASCL[1] == "Queen",,]
 queen_songs <- data.frame(queen_songs[2],queen_songs[3]) #We don't need the band name
+
 #Choose certain songs to explore
 songs_to_select <- which(queen_songs$song %in% c("love of my life", "somebody to love", "bohemian rhapsody", "killer queen", "the show must go on"))
 queen_songs_selected <- queen_songs[songs_to_select,]
@@ -102,6 +106,7 @@ for(s in 1:nrow(queen_songs_selected)){ #Veremos las palabras más utilizadas en
           las = 2)
   dev.off()
 }
+
 #Visualize the most used words from that band
 queen_most_used_words <- get_existing_words(queen_songs$lyrics)
 words.freq <- table(queen_most_used_words)
@@ -121,7 +126,8 @@ dev.off()
 
 ############################################################################
 ################### OBTENCIÓN DEL PAIS DE CADA AUTOR #######################
-existing_countries <- countrycode::codelist$cldr.name.es #Todos los países en castellano, para matchearlo con las string que obtengamos
+#Todos los países en castellano, para matchearlo con las string que obtengamos
+existing_countries <- countrycode::codelist$cldr.name.es 
 #Extraer la lista de países, ahora están en una string
 
 #La intención es recorrer los artistas, crear la url de Wikipedia, que no funciona
@@ -135,7 +141,6 @@ artists[,1] <- str_replace_all(artists[,1],"Of","of") #queda pulir los artículo
 artists[,1] <- str_replace_all(artists[,1]," ","_") #en las url los espacios se sustituyen por '_'
 artist_country <- data.frame(matrix(ncol=2, nrow=length(artists[[1]]))) #introducimos aquí el artista y el país de procedencia
 colnames(artist_country) <- c("Artist", "Country")
-
 for(i in 1:length(artists[[1]])){
   pweb <- paste("https://es.wikipedia.org/wiki/", artists[i, 1], sep="")
   if (url.exists(pweb)){
@@ -143,6 +148,7 @@ for(i in 1:length(artists[[1]])){
     htmltable <- html_table(page)[1]
     data <- as.data.frame(htmltable)[,-2]
     origin_info <- data[which(grepl("Origen", data[[1]])),2]
+    origin_info <- split_country(origin_info, origin_info)#para los casos en los que además del país aparece la ciudad
     country <- get_country(existing_countries, origin_info)
     artist_country[i, ] <- c(artists[i, 1], country)
   } else{
