@@ -1,16 +1,20 @@
-install.packages("stringr")
-install.packages("rvest")
-install.packages("tm") # Si no funciona la instalaciÃ³n, probar instalando antes el paquete XML
-install.packages("SnowballC")
-install.packages("rlist")
+if (!require(stringr)) {install.packages("stringr")}
+if (!require(rvest)) {install.packages("rvest")}
+if (!require(tm)) {install.packages("tm")} # Si no funciona la instalaciÃ³n, probar instalando antes el paquete XML
+if (!require(SnowballC)) {install.packages("SnowballC")}
+if (!require(rlist)) {install.packages("rlist")}
 #install.packages("hash")
-install.packages("ngram")
-install.packages("qdapDictionaries")
-install.packages("wordcloud")
-install.packages("RColorBrewer")
-install.packages("RCurl")
-install.packages("countrycode")
-install.packages("rvest")
+if (!require(ngram)) {install.packages("ngram")}
+if (!require(qdapDictionaries)) {install.packages("qdapDictionaries")}
+if (!require(RCurl)) {install.packages("RCurl")}
+if (!require(countrycode)) {install.packages("countrycode")}
+if (!require(rvest)) {install.packages("rvest")}
+if (!require(tidytext)) {install.packages("tidytext")}
+if (!require(dplyr)) {install.packages("dplyr")}
+#################LIBRERIAS VISUALIZACION###################
+if (!require(wordcloud)) {install.packages("wordcloud")}
+if (!require(RColorBrewer)) {install.packages("RColorBrewer")}
+
 library(rvest)
 library(countrycode)
 library(RColorBrewer)
@@ -22,6 +26,8 @@ library(stringi)
 library(ngram)
 library(qdapDictionaries)
 library(RCurl)
+library(tidytext)
+library(dplyr)
 ###############################################################################################################################
 ##################################################DECLARACIÓN DE FUNCIONES#####################################################
 #Comprobamos si la palabra está en el diccionario
@@ -53,11 +59,11 @@ get_country <- function(country_list, origin){
 ##############################################################################################################################
 
 #primer dataset: songdata.csv
-ASCL <- read.csv(paste(getwd(), "/Data/songlyrics/songdata.csv", sep = ""), header = TRUE, sep = ",", nrows = 200, colClasses = c(NA, NA, "NULL", NA))
+ASCL <- read.csv(paste(getwd(), "/songdata.csv", sep = ""), header = TRUE, sep = ",", nrows = 200, colClasses = c(NA, NA, "NULL", NA))
 #la tercera columna son las letras
 names(ASCL)[3] <- "lyrics"
 #segundo dataset: lyrics.csv
-aux <- read.csv(paste(getwd(), "/Data/songlyrics/lyrics.csv", sep = ""), header = TRUE, sep = ",", nrows = 200, colClasses = c("NULL", NA, "NULL", NA, "NULL", NA))
+aux <- read.csv(paste(getwd(), "/lyrics.csv", sep = ""), header = TRUE, sep = ",", nrows = 200, colClasses = c("NULL", NA, "NULL", NA, "NULL", NA))
 aux <- aux[,c(2, 1, 3)]#mismo orden de columas que aux
 ASCL<- rbind(ASCL, aux)#concatenar los data frames
 rm(aux)
@@ -142,12 +148,17 @@ artists[,1] <- str_replace_all(artists[,1]," ","_") #en las url los espacios se 
 artist_country <- data.frame(matrix(ncol=2, nrow=length(artists[[1]]))) #introducimos aquí el artista y el país de procedencia
 colnames(artist_country) <- c("Artist", "Country")
 for(i in 1:length(artists[[1]])){
+  i <-4
   pweb <- paste("https://es.wikipedia.org/wiki/", artists[i, 1], sep="")
   if (url.exists(pweb)){
     page <- read_html(pweb)
-    htmltable <- html_table(page)[1]
+    htmltable <- html_table(page, header = TRUE)[1]
     data <- as.data.frame(htmltable)[,-2]
-    origin_info <- data[which(grepl("Origen", data[[1]])),2]
+    row <- which(grepl("Origen", data[[1]]))
+    if (row == 0){ #???
+      row <- which(grepl("Nacionalidad", data[[1]]))
+    }
+    origin_info <- data[row, 2]
     origin_info <- split_country(origin_info, origin_info)#para los casos en los que además del país aparece la ciudad
     country <- get_country(existing_countries, origin_info)
     artist_country[i, ] <- c(artists[i, 1], country)
@@ -161,6 +172,15 @@ rm(country)
 rm(origin_info)
 artists <- cbind(artists, artist_country)   #meter el pais y el artista en un data frame
 
+############################################################################
+############EXTRACCI�N DEL SENTIMIENTO DE CADA CANCI�N######################
+words_sentiments <- get_sentiments(lexicon = "nrc") #Data frame palabra,sentimiento
+#En primer lugar, tenemos que dividir el texto de las canciones en palabras
+Adele_hello <- ASCL[138,3]
+Adele_songs <- data.frame(ASCL[134:145,])[-1]
+names(Adele_songs) <- c("Song", "Lyric")
+Adele_tokens <- strsplit(Adele_songs[, 2], " ")
+Adele_sentiments <- inner_join(Adele_tokens, words_sentiments, by = "word")
 ############################################################################
 #VISUALIZACION DE DATOS
 plot(auths_count) #visualizacion de los datos antes de agrupar
