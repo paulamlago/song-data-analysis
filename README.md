@@ -1,14 +1,14 @@
-## Conjunto de datos
-Para la realización del estudio, obtendremos la información de [Kaggle](https://www.kaggle.com/). Los conjuntos a utilizar serán: 
+## Datasets
+To do such study, we have obtained the information from [Kaggle](https://www.kaggle.com/). The sets we will work with are the following: 
 * [Dataset 1](https://www.kaggle.com/mousehead/songlyrics)
 * [Dataset 2](https://www.kaggle.com/gyani95/380000-lyrics-from-metrolyrics)
 
-# Limpieza
-Puesto que las letras de las canciones contienen palabras que no son relevantes a la hora de extraer el significado y sentimiento general, hemos extraido las palabras "útiles", eliminando las llamadas "stopwords" del inglés. Además hemos desarrollado varias funciones, con el apoyo de la librería ```qdapDictionaries```. En primer lugar, "is.word" se encargará de devolver si la palabra que le pasamos como parámetro está en el diccionario de castellano o de ingés o no.
+# Data Cleaning
+Lyrics contain words that are not useful while finding the main feeling and meaning, so we have kept just the most meaningful , removing the so called stopwords. Moreover, we have created several functions relying on the library ```qdapDictionaries```.  First, "is.word", that returns whether the word introduced as a parameter is in the english-spanish language.
 ```R
 is.word  <- function(x) x %in% GradyAugmented
 ```
-En segundo lugar, haciendo uso de la función anterior, hemos desarrollado get_existing_words, que dada la lestra de una canción, solo devuelve aquellas palabras que existen en el diccionario. Esto nos es útil para eliminar coros y otras palabras que no nos son útiles que pueden aparecer en la letra.
+Next, making use of the aforementioned function, the "get_existing_words" function is developed, which name says its functionallity. We can use such function to remove choirs and other words that may appear in the lyrics.
 ```R
 get_existing_words <- function(x){
   lyric <- list()
@@ -21,17 +21,17 @@ get_existing_words <- function(x){
   return(unlist(lyric))
 }
 ```
-# Visualización
-Con el fin de entender cómo están estructurados los datos en el dataset obtenido, hemos visualizado las palabras más utilizadas en las canciones más conocidas de Queen.
+# Visualizing the data
+In order to understand the structure of the data in the dataframe obtained, here we show the words with the higher frequency in some of the most relevant Queen songs.
 
 ![alt text](/Memoria/Imagenes/AnotherOneBitesTheDust.png)
 
-Cualquier persona que haya escuchado esta canción puede corroborar que efectivamente, esas son las palabras más utilizadas. Otros ejemplos pueden verse en las siguientes imágenes.
+Other examples are shown below.
 
 ![alt tex](/Memoria/Imagenes/killerqueen.png)
 
 ![alt tex](/Memoria/Imagenes/loveofmylife.png)
 
-Finalmente, tras visualizar los datos que podemos extraer de las canciones de un cierto grupo, elaboramos una gráfica obteniendo información de todas sus canciones. Como se aprecia, la palabra que más se repite en las canciones del grupo británico es amor.
+Finally, after visualisation of the possible results of the functions applied to a given band we can build a graph from all the songs. As it is shown, the most common word used by the British band is "love".
 
 ![alt tex](/Memoria/Imagenes/queen_most_used_words.png)
