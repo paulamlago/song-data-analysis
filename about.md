@@ -5,8 +5,10 @@ We are 3 students from the last years of study, deeply interested in Big Data an
 
 <table align = "center" border="0" cellpadding="0" cellspacing="0" style="background-color:#FFFFFF; border:0px solid #CCCCCC;">
   <tr>
-    <td valign="top" style="color:#505050; font-family:Georgia, serif; font-size:12px; font-style:italic; line-height:100%; padding-top:10px; padding-right;10px; padding-bottom:10px; padding-left:10px;">
-    Computer science engineer always trying to explore new music.
+    <td valign="center" style="color:#505050; font-family:Georgia, serif; font-size:12px; font-style:italic; line-height:100%; padding-top:10px; padding-right;10px; padding-bottom:10px; padding-left:10px;">
+      <p>Computer science engineer always trying to explore new music.</p>
+      <p><img src = "https://banner2.kisspng.com/20180718/vws/kisspng-email-logo-bounce-address-computer-icons-message-online-application-5b4f433eed6ac1.5937710415319212149725.jpg" width="15" /> pmunoz06@ucm.es</p>
+      <p><img src = "https://image.flaticon.com/icons/svg/25/25231.svg" width = "15"> paulamlago</p>
     </td>
     <td style="padding-top:10px; padding-right:10px; padding-bottom:10px;">
       <img src="https://avatars1.githubusercontent.com/u/26903852?s=460&v=4" 
