@@ -35,3 +35,10 @@ Other examples are shown below.
 Finally, after visualisation of the possible results of the functions applied to a given band we can build a graph from all the songs. As it is shown, the most common word used by the British band is "love".
 
 ![alt tex](/Memoria/Imagenes/queen_most_used_words.png)
+
+Futhermore, if we study the most used words in a subset containing 400 songs, we obtain the result shown below.
+
+![alt tex](/Memoria/Imagenes/Rplot_words.png)
+
+As before, we can distinguish that the most used word by the Bitish band and other songs is **love**.
+
