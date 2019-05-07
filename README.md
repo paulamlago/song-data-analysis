@@ -30,7 +30,7 @@ Other examples are shown below.
 
 ![alt tex](/Memoria/Imagenes/killerqueen.png)
 
-![alt tex](/Memoria/Imagenes/loveofmylife.png)
+![alt tex](/Memoria/Imagenes/loveofmylife.png$style=centerme)
 
 Finally, after visualisation of the possible results of the functions applied to a given band we can build a graph from all the songs. As it is shown, the most common word used by the British band is "love".
 
