@@ -49,6 +49,7 @@ Based on the words extraction from the song lyrics, and using an existing dictio
 words_sentiments <- get_sentiments(lexicon = "nrc")
 ```
 It may happen that a single word is attached to several sentiments, as it can be seen in the picture below.
+
 ![alt tex](/Memoria/Imagenes/words_sentiments.png)
 
 Using the word extraction technique previously explained and this dictionary, we have explored which are the sentiments more used by the singer Adele in 12 of her songs. Before seeing the results, we established the hypothesis that the main sentiment in her work is *sadness* or *negativity*. The results can be seen in the image below.
