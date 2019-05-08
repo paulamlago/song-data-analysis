@@ -11,12 +11,16 @@ if (!require(countrycode)) {install.packages("countrycode")}
 if (!require(rvest)) {install.packages("rvest")}
 if (!require(tidytext)) {install.packages("tidytext")}
 if (!require(dplyr)) {install.packages("dplyr")}
+if (!require(dplyr)) {install.packages("maps")}
+if (!require(dplyr)) {install.packages("plyr")}
 #################LIBRERIAS VISUALIZACION###################
 if (!require(wordcloud)) {install.packages("wordcloud")}
 if (!require(RColorBrewer)) {install.packages("RColorBrewer")}
 if (!require(grid)) {install.packages("grid")}
 if (!require(gridExtra)) {install.packages("gridExtra")}
 
+library(maps)
+library(plyr)
 library(rvest)
 library(countrycode)
 library(RColorBrewer)
@@ -28,13 +32,11 @@ library(stringi)
 library(ngram)
 library(qdapDictionaries)
 library(RCurl)
-library(tidytext)
-library(dplyr)
 library(gridExtra)
 library(grid)
 ###############################################################################################################################
-##################################################DECLARACIÃ“N DE FUNCIONES#####################################################
-#Comprobamos si la palabra estÃ¡ en el diccionario
+##################################################DECLARACIÓN DE FUNCIONES#####################################################
+#Comprobamos si la palabra está en el diccionario
 is.word  <- function(x) x %in% GradyAugmented
 
 get_existing_words <- function(x){ #Tarda mucho :(
@@ -48,16 +50,97 @@ get_existing_words <- function(x){ #Tarda mucho :(
   return(unlist(lyric))
 }
 
-split_country <- function(country, f_list){
-  return(f_list <- stri_extract_all_words(country)[[1]])
+split_words <- function(f_list){
+  return(f_list <- stri_extract_all_words(f_list)[[1]])
 }
 
-get_country <- function(country_list, origin){
-  for (k in length(origin)) {
+extract_country_es <- function(table, countries, world.cities){
+  k <- FALSE
+  for (i in 1:length(table)) {
+    #encontramos la tabla que contiene la info requerida (si existe)
+    if("Origen" %in% (table[1]%>%html_nodes("th")%>%html_text())|"Nacionalidad" %in% (table[1]%>%html_nodes("th")%>%html_text())){      
+      table <- table[i]
+      k <- TRUE
+      break
+    }
+  }
+  if(k){
+    #filtramos por nodos para hacer la busqueda mas eficiente
+    table <- table %>% html_nodes("td") %>% html_nodes("a") %>% html_text()
+    table <- table[1:10]
+    if("Estadounidense" %in% table) return("Estados Unidos")
+    if("Inglaterra" %in% table) return("Reino Unido")
+    #buscamos el pais en la primera lista de paises
+    country <- get_country1(countries, table)
+    #si no, en la segunda
+    if(is.null(country)){
+      #para ello separamos las palabras y comprobamos una a una por ciudad
+      table <- paste(table, collapse = " ")
+      table <- split_words(table)
+      n <- get_country2(world.cities, st)
+      if(n > 0){
+        #si n>0 hay al menos un pais con esa ciudad
+        country <- world.cities$country.etc[n]
+      }
+    }
+    return(country)
+  }
+  return(NULL)
+}
+
+extract_country_en <- function(table, countries, world.cities){
+  k <- FALSE
+  for (i in 1:length(table)) {
+    #encontramos la tabla que contiene la info requerida (si existe)
+    if("Origin" %in% (table[i]%>%html_nodes("th")%>%html_text())|"Born" %in% (table[i]%>%html_nodes("th")%>%html_text())){
+      table <- table[i]
+      k <- TRUE
+      break
+    }
+  }
+  if(k){
+    #filtramos por nodos para hacer la busqueda mas eficiente
+    table <- table %>% html_nodes("td") %>% html_nodes("a") %>% html_text()
+    table <- table[1:10]
+    #buscamos el pais en la primera lista de paises
+    country <- get_country1(countries, table)
+    #si no, en la segunda
+    if(is.null(country)){
+      #para ello separamos las palabras y comprobamos una a una por ciudad
+      table <- paste(table, collapse = " ")
+      table <- split_words(st)
+      n <- get_country2(world.cities, table)     
+      if(n > 0){
+        #si n>0 hay al menos un pais con esa ciudad
+        country <- world.cities$country.etc[n]
+      }
+    }
+    return(country)
+  }
+  return(NULL)
+}
+
+get_country1 <- function(country_list, origin){
+  #busqueda en las listas de paises de countrycode
+  for (k in 1:length(origin)) {
     if(origin[k] %in% country_list){
       return(origin[k])
     }
   }
+}
+
+get_country2 <- function(cities, origin){
+  #busqueda en la base de datos de world.cities
+  for (k in 1:length(origin)) {
+    n <- which(origin[k] == cities$name)
+    if(length(n) >= 1) {return(n[1])}
+  }
+  return(0)
+}
+
+firstup <- function(x) {
+  substr(x, 1, 1) <- toupper(substr(x, 1, 1))
+  return(x)
 }
 
 sentiment_extractor <- function(token_list){
@@ -71,36 +154,64 @@ sentiment_extractor <- function(token_list){
   
   return(sentiments)
 }
-##############################################################################################################################
 
+##############################################################################################################################
+#################################################  EXTRACTION AND DATA STRUCTURE  ########################################################
 #primer dataset: songdata.csv
-ASCL <- read.csv(paste(getwd(), "/songdata.csv", sep = ""), header = TRUE, sep = ",", colClasses = c(NA, NA, "NULL", NA))
+ASCL <- read.csv(paste(getwd(), "/Data/songlyrics/songdata.csv", sep = ""), header = TRUE, sep = ",", nrows = 3000, colClasses = c(NA, NA, "NULL", NA))
 #la tercera columna son las letras
 names(ASCL)[3] <- "lyrics"
 #segundo dataset: lyrics.csv
-aux <- read.csv(paste(getwd(), "/lyrics.csv", sep = ""), header = TRUE, sep = ",", colClasses = c("NULL", NA, "NULL", NA, "NULL", NA))
+aux <- read.csv(paste(getwd(), "/Data/songlyrics/lyrics.csv", sep = ""), header = TRUE, sep = ",", nrows = 3000, colClasses = c("NULL", NA, "NULL", NA, "NULL", NA))
 aux <- aux[,c(2, 1, 3)]#mismo orden de columas que aux
 ASCL<- rbind(ASCL, aux)#concatenar los data frames
 rm(aux)
-# Convertimos a minÃºsculas cada palabra, no solo de la letra de las canciones, sino del tÃ­tulo de la canciÃ³n
-#Problema -> Al hacer apply devuelve una lista en vez de un data.frame, asÃ­ que volvemos a convertirlo a data.frame
-# la funciÃ³n t() devuelve la matriz transpuesta, ya que por alguna razÃ³n apply devuelve las columnas como filas y al revÃ©s
 ASCL <- data.frame(ASCL)
+# Convertimos a minúsculas cada palabra, no solo de la letra de las canciones, sino del título de la canción
+#Problema -> Al hacer apply devuelve una lista en vez de un data.frame, así que volvemos a convertirlo a data.frame
+# la función t() devuelve la matriz transpuesta, ya que por alguna razón apply devuelve las columnas como filas y al revés
+
+#for(i in 1:length(ASCL))
+#  ASCL[i] <- lapply(ASCL[i],toupper) #pasar el dataframe a mayusc
+
+################################################################################################################################
+############################################  DATA CLEANING  ###################################################################
+#DATAFRAME CONTAINING ALL INFO 
 ASCL <- setNames(ASCL <- data.frame(ASCL[[1]],apply(ASCL[2:3], 2, tolower)), c("artist","song","lyrics")) #no transformamos la columna de artistas
 ASCL[,3] <- removeWords(as.character(ASCL[,3]), words = c(stopwords("english"), "oh", "ah", "eh", "uh", "ma"))  #stopwords estan en minuscula
 ASCL[,3] <- stripWhitespace(ASCL[,3])
 ASCL[,3] <- removePunctuation(ASCL[,3])
 ASCL[,3] <- removeNumbers(ASCL[,3]) # Por si acaso
-#for(i in 1:length(ASCL))
-#  ASCL[i] <- lapply(ASCL[i],toupper) #pasar el dataframe a mayusc
-#############################################################################
-### Get all different words in the whole dataset ###
-existing_words_in_all_set <- get_existing_words(ASCL[,3]) #comprueba palabras en inglÃ©s y castellano siempre en minusuclas
+
+#ARTIST INFO CLEANING 
+artists <- cbind(as.data.frame(table(ASCL$artist), stringsAsFactors = FALSE), NA) #aquí van los artistas con su frecuencia en el dataframe
+#separamos las palabras que componen el nombre del artista por espacios
+artists[,1] <- str_replace_all(artists[,1],"-"," ")
+artists[,1] <- str_replace_all(artists[,1],"_"," ")
+#Pasamos a mayus la primera letra de cada palabra y unimos con '_' para busqueda en la web
+for (i in 1:length(artists$Var1)) {
+  artists[i, 1] <- paste(unlist(firstup(split_words(artists[i, 1]))), collapse = "_")  
+}
+#pasamos los articulos que mas aparecen a minuscula
+artists[,1] <- str_replace_all(artists[,1],"Of","of") #queda pulir los artículos de los artistas
+artists[,1] <- str_replace_all(artists[,1],"This","of") #queda pulir los artículos de los artistas
+artists[,1] <- str_replace_all(artists[,1],"With","of") #queda pulir los artículos de los artistas
+artists[,1] <- str_replace_all(artists[,1]," ","_") #en las url los espacios se sustituyen por '_'
+#cambaimos el nombre de las columnas
+colnames(artists) <- c("Artist", "Freq","Country")
+
+
+##########################################################################################################################
+#################################### DATA INTERPRETATION ##############################################
+
+#GET ALL WORDS IN DATASET 
+existing_words_in_all_set <- get_existing_words(ASCL[,3]) #comprueba palabras en inglés y castellano siempre en minusuclas
 words.freq <- table(existing_words_in_all_set)#extraemos la frecuencia con la que aparece cada palabra
 words_data <- cbind.data.frame(names(words.freq),as.integer(words.freq)) #unimos palabras con frecuencias y combinamos
 names(words_data) <- c("word", "repetitions")
-words_data <- words_data[order(words_data$repetitions, decreasing = TRUE)[1:10], ] #Cogemos las 10 palabras con mÃ¡s apariciones
-### Get words from a certain band
+words_data <- words_data[order(words_data$repetitions, decreasing = TRUE)[1:10], ] #Cogemos las 10 palabras con más apariciones
+
+#Get words from a certain band
 queen_songs <- ASCL[ASCL[1] == "Queen",,]
 queen_songs <- data.frame(queen_songs[2],queen_songs[3]) #We don't need the band name
 
@@ -108,14 +219,14 @@ queen_songs <- data.frame(queen_songs[2],queen_songs[3]) #We don't need the band
 songs_to_select <- which(queen_songs$song %in% c("love of my life", "somebody to love", "bohemian rhapsody", "killer queen", "the show must go on"))
 queen_songs_selected <- queen_songs[songs_to_select,]
 pal <- colorRampPalette(colors = c("blue", "lightblue"))(length(words_data[[1]]))
-for(s in 1:nrow(queen_songs_selected)){ #Veremos las palabras mÃ¡s utilizadas en cada canciÃ³n
+for(s in 1:nrow(queen_songs_selected)){ #Veremos las palabras más utilizadas en cada canción
   song <- queen_songs_selected[s,,]
   print(song$song)
   song_lyric <- get_existing_words(song$lyrics)
   words.freq <- table(song_lyric)
   words_data <- cbind.data.frame(names(words.freq),as.integer(words.freq))
   names(words_data) <- c("word", "repetitions")
-  words_data <- words_data[order(words_data$repetitions, decreasing = TRUE)[1:10], ] #Cogemos las 10 palabras con mÃ¡s apariciones
+  words_data <- words_data[order(words_data$repetitions, decreasing = TRUE)[1:10], ] #Cogemos las 10 palabras con más apariciones
   fname <- paste("/home/paulamlago/Documents/Uni/MIN/Analisis-de-letras-de-canciones/", str_replace_all(song$song, " ",""), ".png", sep="")
   png(filename = fname)
   barplot(words_data$repetitions, 
@@ -128,109 +239,26 @@ for(s in 1:nrow(queen_songs_selected)){ #Veremos las palabras mÃ¡s utilizadas 
   dev.off()
 }
 
-#Visualize the most used words from that band
-queen_most_used_words <- get_existing_words(queen_songs$lyrics)
-words.freq <- table(queen_most_used_words)
-words_data <- cbind.data.frame(names(words.freq),as.integer(words.freq))
-names(words_data) <- c("word", "repetitions")
-pal <- colorRampPalette(colors = c("orange", "white"))(length(words_data[[1]]))
-words_data <- words_data[order(words_data$repetitions, decreasing = TRUE)[1:15], ] #Cogemos las 15 palabras con mÃ¡s apariciones
-fname <- paste("/home/paulamlago/Documents/Uni/MIN/Analisis-de-letras-de-canciones/queen_most_used_words", ".png", sep="")
-png(filename = fname)
-barplot(words_data$repetitions, 
-        names.arg = words_data$word,
-        col = pal,
-        xlab = "Words",
-        ylab = "Repetitions",
-        las = 2)
-dev.off()
-
-############################################################################
-################### OBTENCIÃ“N DEL PAIS DE CADA AUTOR #######################
-#Todos los paÃ­ses en castellano, para matchearlo con las string que obtengamos
-existing_countries <- countrycode::codelist$cldr.name.es 
-#Extraer la lista de paÃ­ses, ahora estÃ¡n en una string
-
-#La intenciÃ³n es recorrer los artistas, crear la url de Wikipedia, que no funciona
-#porque tiene que ser la primera letra mayÃºscula, aunque en el caso de abba tiene que
-#ser ABBA, por lo que en la lectura no debermos pasar los nombres de los grupos a minÃºscula!!
-#AdemÃ¡s, en Wikipedia siempre estÃ¡ la etiqueta Origen, donde viene el paÃ­s en Ãºltimo lugar
-#El cÃ³digo funciona para el ejemplo de Queen, tenemos que conseguir que funcione el bucle
-#y crear un nuevo data frame artista - paÃ­s
-artists <- as.data.frame(table(ASCL$artist)) #aquÃ­ van los artistas con su frecuencia en el dataframe
-artists[,1] <- str_replace_all(artists[,1],"Of","of") #queda pulir los artÃ­culos de los artistas
-artists[,1] <- str_replace_all(artists[,1]," ","_") #en las url los espacios se sustituyen por '_'
-artist_country <- data.frame(matrix(ncol=2, nrow=length(artists[[1]]))) #introducimos aquÃ­ el artista y el paÃ­s de procedencia
-colnames(artist_country) <- c("Artist", "Country")
-for(i in 1:length(artists[[1]])){
-  i <-4
-  pweb <- paste("https://es.wikipedia.org/wiki/", artists[i, 1], sep="")
-  if (url.exists(pweb)){
-    page <- read_html(pweb)
-    htmltable <- html_table(page, header = TRUE)[1]
-    data <- as.data.frame(htmltable)[,-2]
-    row <- which(grepl("Origen", data[[1]]))
-    if (row == 0){ #???
-      row <- which(grepl("Nacionalidad", data[[1]]))
-    }
-    origin_info <- data[row, 2]
-    origin_info <- split_country(origin_info, origin_info)#para los casos en los que ademÃ¡s del paÃ­s aparece la ciudad
-    country <- get_country(existing_countries, origin_info)
-    artist_country[i, ] <- c(artists[i, 1], country)
-  } else{
-    print("No information for ", artists[i, 1])
-  }
-}
-rm(data)
-rm(htmltable)
-rm(country)
-rm(origin_info)
-artists <- cbind(artists, artist_country)   #meter el pais y el artista en un data frame
-
-############################################################################
-############EXTRACCIÓN DEL SENTIMIENTO DE ADELE (prueba)####################
+#EXTRACCIÓN DEL SENTIMIENTO DE ADELE(ejemplo)
 words_sentiments <- get_sentiments(lexicon = "nrc") #Data frame palabra,sentimiento
 #En primer lugar, tenemos que dividir el texto de las canciones en palabras
 Adele_songs <- data.frame(ASCL[134:145,])[3] #Cogemos 3 porque no nos interesa nada más que la letra
 Adele_tokens <- strsplit(Adele_songs[, 1], " ")
 Adele_all_tokens <- unlist(Adele_tokens)
-rm(Adele_tokens)
 Adele_all_tokens <- stripWhitespace(Adele_all_tokens)
-Adele_all_tokens <- Adele_all_tokens[-c(which(Adele_all_tokens == ""),which(Adele_all_tokens == "verse"), which(Adele_all_tokens == "chorus"))] #para quitar "" y "verse"
-Adele_all_tokens.freq <- table(Adele_all_tokens)
-Adele_all_tokens.table <- cbind.data.frame(names(Adele_all_tokens.freq), as.integer(Adele_all_tokens.freq))
-names(Adele_all_tokens.table) <- c("words", "freq")
-Adele_all_tokens.table <- Adele_all_tokens.table[order(Adele_all_tokens.table$freq, decreasing = TRUE)[1:15], ]
-barplot(Adele_all_tokens.table$freq,
-        names.arg = Adele_all_tokens.table$words,
-        ylab = "Frequency",
-        las = 2,
-        col = "indianred3")
-
-#we can also use sentiment_extractor
 Adele_sentiments <- list()
 Adele_word_sentiment <- data.frame()
 for (token in Adele_all_tokens){
   if (any(words_sentiments$word == token)){
     Adele_sentiments <- words_sentiments[which(words_sentiments$word == token), 2]
-    Adele_word_sentiment <- rbind(Adele_word_sentiment, data.frame(token, Adele_sentiments))
+    Adele_word_sentiment <- rbind(df, data.frame(token, Adele_sentiments))
   }
 }
 
 Adele_sentiments_list <- unlist(Adele_word_sentiment[,2])
 sentiments.freq <- table(Adele_sentiments_list)
 Adele_sentiments <- cbind.data.frame(names(sentiments.freq), as.integer(sentiments.freq))
-names(Adele_sentiments) <- c("Sentiments", "Frecuency")
-par(mar=c(5,6,4,1)+.1) #margen izquierdo
-barplot(Adele_sentiments$Frecuency,
-        names.arg = Adele_sentiments$Sentiments,
-        xlab = "Frecuency",
-        horiz = TRUE,
-        las = 2, col='coral')
-rm(sentiments.freq, Adele_songs, Adele_word_sentiment, token, Adele_all_tokens, Adele_all_tokens.freq, Adele_all_tokens.table, Adele_sentiments, Adele_sentiments_list)
-############################################################################
 
-############################################################################
 ############EXTRACCIÓN DEL SENTIMIENTO DE LAS CANCIONES#####################
 words_sentiments <- get_sentiments(lexicon = "nrc") #Data frame palabra,sentimiento
 #Nos desacemos del titulo de las canciones
@@ -257,15 +285,172 @@ grid.table(Artist_sentiments.freq)
 Artist_most_used_sentiment <- data.frame(rownames(Artist_sentiments.freq), colnames(Artist_sentiments.freq)[apply(Artist_sentiments.freq, 1, which.max)])
 names(Artist_most_used_sentiment) <- c("Artists", "Sentiments")
 plot(Artist_most_used_sentiment$Sentiments, col = "ligblue")
-############################################################################
 
-#VISUALIZACION DE DATOS
+#################################################################################################################
+################### OBTENCIÓN DEL PAIS DE CADA AUTOR #######################
+#Todos los países en castellano e ingles, para comprobar con las string que obtengamos
+existing_countries_es <- countrycode::codelist$cldr.name.es 
+existing_countries_en <- countrycode::codelist$cldr.name.en 
+
+data(world.cities)
+#La intención es recorrer los artistas, crear la url de Wikipedia y encontrar la tabla que contenga la info que necesitamos
+
+
+#ejecutamos diferentes loops para buscar el país de procedencia del artista teniendo en cuenta que pueden faltar detalles como
+# poner después del artista (banda) para que sea reconocible por wikipedia
+for(i in 1:length(artists$Artist)){
+  cat(i)
+  pweb <- paste("https://es.wikipedia.org/wiki/", artists[i, 1], sep="")
+  if (url.exists(pweb)){  
+    page <- read_html(pweb)
+    a <- page %>% html_nodes("table")
+    country <- extract_country_es(a, existing_countries_es, world.cities)
+    if(is.null(country)){
+      artists[i,3] <- NA
+    }
+    else{
+      artists[i,3] <- country
+    }
+  }
+  else{
+    artists[i,3] <- NA
+  }
+}
+
+for(i in 1:length(artists$Artist)){
+  if(is.na(artists$Country[i])){
+    pweb <- paste("https://es.wikipedia.org/wiki/", artists[i, 1], "_(banda)", sep="")
+    if (url.exists(pweb)){  
+      page <- read_html(pweb)
+      a <- page %>% html_nodes("table")
+      country <- extract_country_es(a, existing_countries_es, world.cities)
+      if(is.null(country)){
+        artists[i,3] <- NA
+      }
+      else{
+        artists[i,3] <- country
+      }
+    }
+    else{
+      artists[i,3] <- NA
+    }
+  }
+}
+
+for(i in 1:length(artists$Artist)){
+  if(is.na(artists$Country[i])){
+    cat(i)
+    pweb <- paste("https://es.wikipedia.org/wiki/", artists[i, 1], "_(cantante)", sep="")
+    if (url.exists(pweb)){  
+      page <- read_html(pweb)
+      a <- page %>% html_nodes("table")
+      country <- extract_country_es(a, existing_countries_es, world.cities)
+      if(is.null(country)){
+        artists[i,3] <- NA
+      }
+      else{
+        artists[i,3] <- country
+      }
+    }
+    else{
+      artists[i,3] <- NA
+    }
+  }
+}
+
+for(i in 1:length(artists$Artist)){
+  if(is.na(artists$Country[i])){
+    cat(i)
+    pweb <- paste("https://en.wikipedia.org/wiki/", artists[i, 1], sep="")
+    if (url.exists(pweb)){  
+      page <- read_html(pweb)
+      a <- page %>% html_nodes("table")
+      country <- extract_country_en(a, existing_countries_en, world.cities)
+      if(is.null(country)){
+        artists[i,3] <- NA
+      }
+      else{
+        artists[i,3] <- country
+      }
+    }
+    else{
+      artists[i,3] <- NA
+    }
+  }
+}
+
+for(i in 1:length(artists$Artist)){
+  if(is.na(artists$Country[i])){
+    cat(i)
+    pweb <- paste("https://en.wikipedia.org/wiki/", artists[i, 1], "_(band)", sep="")
+    if (url.exists(pweb)){  
+      page <- read_html(pweb)
+      a <- page %>% html_nodes("table")
+      country <- extract_country_en(a, existing_countries_en, world.cities)
+      if(is.null(country)){
+        artists[i,3] <- NA
+      }
+      else{
+        artists[i,3] <- country
+      }
+    }
+    else{
+      artists[i,3] <- NA
+    }
+  }
+}
+
+for(i in 1:length(artists$Artist)){
+  if(is.na(artists$Country[i])){
+    cat(i)
+    pweb <- paste("https://en.wikipedia.org/wiki/", artists[i, 1], "_(singer)", sep="")
+    if (url.exists(pweb)){  
+      page <- read_html(pweb)
+      a <- page %>% html_nodes("table")
+      country <- extract_country_en(a, existing_countries_en, world.cities)
+      if(is.null(country)){
+        artists[i,3] <- NA
+      }
+      else{
+        artists[i,3] <- country
+      }
+    }
+    else{
+      artists[i,3] <- NA
+    }
+  }
+}
+#buscamos que los artistas con mayor número de canciones tengan país de procedencia ya que serán más relevantes
+
+
+rm(country)
+
+########################################################################################################################
+##############################VISUALIZACION DE DATOS######################
 plot(auths_count) #visualizacion de los datos antes de agrupar
 wordcloud(words_data[,1], freq = words_data[,2],min.freq = 1, random.order = FALSE,color= brewer.pal(8, "Dark2"), max.words = 500)
-#VisualizaciÃ³n 10 palabras mÃ¡s utilizadas
+
+#Visualización 10 palabras más utilizadas
 pal <- colorRampPalette(colors = c("blue", "lightblue"))(length(words_data[[1]]))
 barplot(words_data$repetitions, 
         names.arg = words_data$word,
         col = pal,
         xlab = "Words",
         ylab = "Repetitions")
+
+#Visualize the most used words from that band
+queen_most_used_words <- get_existing_words(queen_songs$lyrics)
+words.freq <- table(queen_most_used_words)
+words_data <- cbind.data.frame(names(words.freq),as.integer(words.freq))
+names(words_data) <- c("word", "repetitions")
+pal <- colorRampPalette(colors = c("orange", "white"))(length(words_data[[1]]))
+words_data <- words_data[order(words_data$repetitions, decreasing = TRUE)[1:15], ] #Cogemos las 15 palabras con más apariciones
+fname <- paste("/home/paulamlago/Documents/Uni/MIN/Analisis-de-letras-de-canciones/queen_most_used_words", ".png", sep="")
+png(filename = fname)
+barplot(words_data$repetitions, 
+        names.arg = words_data$word,
+        col = pal,
+        xlab = "Words",
+        ylab = "Repetitions",
+        las = 2)
+dev.off()
