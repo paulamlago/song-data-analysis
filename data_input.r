@@ -14,6 +14,8 @@ if (!require(dplyr)) {install.packages("dplyr")}
 #################LIBRERIAS VISUALIZACION###################
 if (!require(wordcloud)) {install.packages("wordcloud")}
 if (!require(RColorBrewer)) {install.packages("RColorBrewer")}
+if (!require(grid)) {install.packages("grid")}
+if (!require(gridExtra)) {install.packages("gridExtra")}
 
 library(rvest)
 library(countrycode)
@@ -28,6 +30,8 @@ library(qdapDictionaries)
 library(RCurl)
 library(tidytext)
 library(dplyr)
+library(gridExtra)
+library(grid)
 ###############################################################################################################################
 ##################################################DECLARACIÃ“N DE FUNCIONES#####################################################
 #Comprobamos si la palabra estÃ¡ en el diccionario
@@ -56,14 +60,25 @@ get_country <- function(country_list, origin){
   }
 }
 
+sentiment_extractor <- function(token_list){
+  words_sentiments <- get_sentiments(lexicon = "nrc")
+  sentiments <- list()
+  for (token in token_list){
+    if (any(words_sentiments$word == token)){
+      sentiments <- c(sentiments, words_sentiments[which(words_sentiments$word == token), 2])
+    }
+  }
+  
+  return(sentiments)
+}
 ##############################################################################################################################
 
 #primer dataset: songdata.csv
-ASCL <- read.csv(paste(getwd(), "/songdata.csv", sep = ""), header = TRUE, sep = ",", nrows = 200, colClasses = c(NA, NA, "NULL", NA))
+ASCL <- read.csv(paste(getwd(), "/songdata.csv", sep = ""), header = TRUE, sep = ",", colClasses = c(NA, NA, "NULL", NA))
 #la tercera columna son las letras
 names(ASCL)[3] <- "lyrics"
 #segundo dataset: lyrics.csv
-aux <- read.csv(paste(getwd(), "/lyrics.csv", sep = ""), header = TRUE, sep = ",", nrows = 200, colClasses = c("NULL", NA, "NULL", NA, "NULL", NA))
+aux <- read.csv(paste(getwd(), "/lyrics.csv", sep = ""), header = TRUE, sep = ",", colClasses = c("NULL", NA, "NULL", NA, "NULL", NA))
 aux <- aux[,c(2, 1, 3)]#mismo orden de columas que aux
 ASCL<- rbind(ASCL, aux)#concatenar los data frames
 rm(aux)
@@ -173,27 +188,77 @@ rm(origin_info)
 artists <- cbind(artists, artist_country)   #meter el pais y el artista en un data frame
 
 ############################################################################
-############EXTRACCIÓN DEL SENTIMIENTO DE CADA CANCIÓN######################
+############EXTRACCIÓN DEL SENTIMIENTO DE ADELE (prueba)####################
 words_sentiments <- get_sentiments(lexicon = "nrc") #Data frame palabra,sentimiento
 #En primer lugar, tenemos que dividir el texto de las canciones en palabras
 Adele_songs <- data.frame(ASCL[134:145,])[3] #Cogemos 3 porque no nos interesa nada más que la letra
 Adele_tokens <- strsplit(Adele_songs[, 1], " ")
 Adele_all_tokens <- unlist(Adele_tokens)
+rm(Adele_tokens)
 Adele_all_tokens <- stripWhitespace(Adele_all_tokens)
+Adele_all_tokens <- Adele_all_tokens[-c(which(Adele_all_tokens == ""),which(Adele_all_tokens == "verse"), which(Adele_all_tokens == "chorus"))] #para quitar "" y "verse"
+Adele_all_tokens.freq <- table(Adele_all_tokens)
+Adele_all_tokens.table <- cbind.data.frame(names(Adele_all_tokens.freq), as.integer(Adele_all_tokens.freq))
+names(Adele_all_tokens.table) <- c("words", "freq")
+Adele_all_tokens.table <- Adele_all_tokens.table[order(Adele_all_tokens.table$freq, decreasing = TRUE)[1:15], ]
+barplot(Adele_all_tokens.table$freq,
+        names.arg = Adele_all_tokens.table$words,
+        ylab = "Frequency",
+        las = 2,
+        col = "indianred3")
+
+#we can also use sentiment_extractor
 Adele_sentiments <- list()
 Adele_word_sentiment <- data.frame()
 for (token in Adele_all_tokens){
   if (any(words_sentiments$word == token)){
     Adele_sentiments <- words_sentiments[which(words_sentiments$word == token), 2]
-    Adele_word_sentiment <- rbind(df, data.frame(token, Adele_sentiments))
+    Adele_word_sentiment <- rbind(Adele_word_sentiment, data.frame(token, Adele_sentiments))
   }
 }
 
 Adele_sentiments_list <- unlist(Adele_word_sentiment[,2])
 sentiments.freq <- table(Adele_sentiments_list)
 Adele_sentiments <- cbind.data.frame(names(sentiments.freq), as.integer(sentiments.freq))
+names(Adele_sentiments) <- c("Sentiments", "Frecuency")
+par(mar=c(5,6,4,1)+.1) #margen izquierdo
+barplot(Adele_sentiments$Frecuency,
+        names.arg = Adele_sentiments$Sentiments,
+        xlab = "Frecuency",
+        horiz = TRUE,
+        las = 2, col='coral')
+rm(sentiments.freq, Adele_songs, Adele_word_sentiment, token, Adele_all_tokens, Adele_all_tokens.freq, Adele_all_tokens.table, Adele_sentiments, Adele_sentiments_list)
+############################################################################
 
 ############################################################################
+############EXTRACCIÓN DEL SENTIMIENTO DE LAS CANCIONES#####################
+words_sentiments <- get_sentiments(lexicon = "nrc") #Data frame palabra,sentimiento
+#Nos desacemos del titulo de las canciones
+AL <- split(ASCL[-2], ASCL$artist) #data frame of dataframes
+#create a data frame containing artist - list of words
+Artist_lyrics <- data.frame()
+Artist_sentiments <- data.frame()
+for (i in 1:length(AL)){
+  artist_words <- unlist(str_split(AL[i][[1]][,2], " "))
+  print(i)
+  if (length(artist_words) > 0){
+    Artist_lyrics <- rbind(Artist_lyrics, data.frame(AL[i][[1]][1,1], artist_words)) #dataframe Artist -word
+    sentiment_list <- list()
+    sentiment_list <- sentiment_extractor(artist_words) #returns a list of lists of sentiments
+    print(length(sentiment_list)) #estas son las palabras que tienen asociados sentimientos en el diccionario
+    Artist_sentiments <- rbind(Artist_sentiments, data.frame(AL[i][[1]][1,1], unlist(sentiment_list))) # dataframe Artist - sentiment
+  }
+}
+rm(artist_words, sentiment_list, i, AL)
+
+Artist_sentiments.freq <- table(Artist_sentiments)
+grid.table(Artist_sentiments.freq)
+#hacemos agrupaciones por artista y cogemos los sentimientos más presentes de cada uno
+Artist_most_used_sentiment <- data.frame(rownames(Artist_sentiments.freq), colnames(Artist_sentiments.freq)[apply(Artist_sentiments.freq, 1, which.max)])
+names(Artist_most_used_sentiment) <- c("Artists", "Sentiments")
+plot(Artist_most_used_sentiment$Sentiments, col = "ligblue")
+############################################################################
+
 #VISUALIZACION DE DATOS
 plot(auths_count) #visualizacion de los datos antes de agrupar
 wordcloud(words_data[,1], freq = words_data[,2],min.freq = 1, random.order = FALSE,color= brewer.pal(8, "Dark2"), max.words = 500)
