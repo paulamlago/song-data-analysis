@@ -59,5 +59,6 @@ The barplot shows that the most recurrent feeling is *positive*, which has resul
 * The 12 songs in the dataset belonging to this Artist is not enough representative.
 * Studying with the word scrapping technique, we can see that this are the most used words: 
 ![alt tex](/Memoria/Imagenes/Adele_words.png)
+
   *go* is not in the sentiments dictionary, but *love* does, and the sentiments attached to that word are *joy* and *positive*, so we can conclude that the usage of this dictionary does not allow us to have into account the context of the word.
 
