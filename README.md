@@ -52,9 +52,11 @@ It may happen that a single word is attached to several sentiments, as it can be
 
 ![alt tex](/Memoria/Imagenes/words_sentiments.png)
 
-Using the word extraction technique previously explained and this dictionary, we have explored which are the sentiments more used by the singer Adele in 12 of her songs. Before seeing the results, we established the hypothesis that the main sentiment in her work is *sadness* or *negativity*. The results can be seen in the image below.
+Using the word extraction technique previously explained and this dictionary, we have explored which are the sentiments more used by the singer Adele in 12 of her songs. Before seeing the results, we established the hypothesis that the main sentiment in her work is *sadness* or *negativity*. The results can be seen in the images below.
 
 ![alt tex](/Memoria/Imagenes/Adele_sentiments.png)
+
+![alt tex](/Memoria/Imagenes/Adele_wordcloud.png)
 
 The barplot shows that the most recurrent feeling is *positive*, which has resulted from the following reasons:
 * The 12 songs in the dataset belonging to this Artist is not enough representative.
@@ -63,3 +65,6 @@ The barplot shows that the most recurrent feeling is *positive*, which has resul
 
   *go* is not in the sentiments dictionary, but *love* does, and the sentiments attached to that word are *joy* and *positive*, so we can conclude that the usage of this dictionary does not allow us to have into account the context of the word.
 
+As we previously studied Queen's most used words, we have also extracted which are the most present sentiments.
+
+![alt tex](/Memoria/Imagenes/Queen_wordcloud.png)
