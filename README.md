@@ -68,3 +68,8 @@ The barplot shows that the most recurrent feeling is *positive*, which has resul
 As we previously studied Queen's most used words, we have also extracted which are the most present sentiments.
 
 ![alt tex](/Memoria/Imagenes/Queen_wordcloud.png)
+
+To conclude, we have extracted the most frecuent sentiment for each artist or band in the dataset and we have shown in the following graph which are the feelings more frecuently used.
+
+![alt tex](/Memoria/Imagenes/most_frecuent_sentiments.png)
+
