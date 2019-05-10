@@ -16,9 +16,7 @@ if (!require(dplyr)) {install.packages("plyr")}
 #################LIBRERIAS VISUALIZACION###################
 if (!require(wordcloud)) {install.packages("wordcloud")}
 if (!require(RColorBrewer)) {install.packages("RColorBrewer")}
-if (!require(grid)) {install.packages("grid")}
-if (!require(gridExtra)) {install.packages("gridExtra")}
-
+##########################################################
 library(maps)
 library(plyr)
 library(rvest)
@@ -32,8 +30,6 @@ library(stringi)
 library(ngram)
 library(qdapDictionaries)
 library(RCurl)
-library(gridExtra)
-library(grid)
 ###############################################################################################################################
 ##################################################DECLARACIÓN DE FUNCIONES#####################################################
 #Comprobamos si la palabra está en el diccionario
@@ -58,7 +54,7 @@ extract_country_es <- function(table, countries, world.cities){
   k <- FALSE
   for (i in 1:length(table)) {
     #encontramos la tabla que contiene la info requerida (si existe)
-    if("Origen" %in% (table[1]%>%html_nodes("th")%>%html_text())|"Nacionalidad" %in% (table[1]%>%html_nodes("th")%>%html_text())){      
+    if("Origen" %in% (table[i]%>%html_nodes("th")%>%html_text())|"Nacionalidad" %in% (table[i]%>%html_nodes("th")%>%html_text())|"Nacimiento" %in% (table[i]%>%html_nodes("th")%>%html_text())){      
       table <- table[i]
       k <- TRUE
       break
@@ -77,7 +73,7 @@ extract_country_es <- function(table, countries, world.cities){
       #para ello separamos las palabras y comprobamos una a una por ciudad
       table <- paste(table, collapse = " ")
       table <- split_words(table)
-      n <- get_country2(world.cities, st)
+      n <- get_country2(world.cities, table)
       if(n > 0){
         #si n>0 hay al menos un pais con esa ciudad
         country <- world.cities$country.etc[n]
@@ -108,7 +104,7 @@ extract_country_en <- function(table, countries, world.cities){
     if(is.null(country)){
       #para ello separamos las palabras y comprobamos una a una por ciudad
       table <- paste(table, collapse = " ")
-      table <- split_words(st)
+      table <- split_words(table)
       n <- get_country2(world.cities, table)     
       if(n > 0){
         #si n>0 hay al menos un pais con esa ciudad
@@ -143,26 +139,14 @@ firstup <- function(x) {
   return(x)
 }
 
-sentiment_extractor <- function(token_list){
-  words_sentiments <- get_sentiments(lexicon = "nrc")
-  sentiments <- list()
-  for (token in token_list){
-    if (any(words_sentiments$word == token)){
-      sentiments <- c(sentiments, words_sentiments[which(words_sentiments$word == token), 2])
-    }
-  }
-  
-  return(sentiments)
-}
-
 ##############################################################################################################################
 #################################################  EXTRACTION AND DATA STRUCTURE  ########################################################
 #primer dataset: songdata.csv
-ASCL <- read.csv(paste(getwd(), "/Data/songlyrics/songdata.csv", sep = ""), header = TRUE, sep = ",", nrows = 3000, colClasses = c(NA, NA, "NULL", NA))
+ASCL <- read.csv(paste(getwd(), "/Data/songlyrics/songdata.csv", sep = ""), header = TRUE, sep = ",", nrows = 5000, colClasses = c(NA, NA, "NULL", NA))
 #la tercera columna son las letras
 names(ASCL)[3] <- "lyrics"
 #segundo dataset: lyrics.csv
-aux <- read.csv(paste(getwd(), "/Data/songlyrics/lyrics.csv", sep = ""), header = TRUE, sep = ",", nrows = 3000, colClasses = c("NULL", NA, "NULL", NA, "NULL", NA))
+aux <- read.csv(paste(getwd(), "/Data/songlyrics/lyrics.csv", sep = ""), header = TRUE, sep = ",", nrows = 5000, colClasses = c("NULL", NA, "NULL", NA, "NULL", NA))
 aux <- aux[,c(2, 1, 3)]#mismo orden de columas que aux
 ASCL<- rbind(ASCL, aux)#concatenar los data frames
 rm(aux)
@@ -199,7 +183,6 @@ artists[,1] <- str_replace_all(artists[,1],"With","of") #queda pulir los artícu
 artists[,1] <- str_replace_all(artists[,1]," ","_") #en las url los espacios se sustituyen por '_'
 #cambaimos el nombre de las columnas
 colnames(artists) <- c("Artist", "Freq","Country")
-
 
 ##########################################################################################################################
 #################################### DATA INTERPRETATION ##############################################
@@ -239,7 +222,7 @@ for(s in 1:nrow(queen_songs_selected)){ #Veremos las palabras más utilizadas en
   dev.off()
 }
 
-#EXTRACCIÓN DEL SENTIMIENTO DE ADELE(ejemplo)
+#EXTRACCIÓN DEL SENTIMIENTO DE CADA CANCIÓN
 words_sentiments <- get_sentiments(lexicon = "nrc") #Data frame palabra,sentimiento
 #En primer lugar, tenemos que dividir el texto de las canciones en palabras
 Adele_songs <- data.frame(ASCL[134:145,])[3] #Cogemos 3 porque no nos interesa nada más que la letra
@@ -259,32 +242,6 @@ Adele_sentiments_list <- unlist(Adele_word_sentiment[,2])
 sentiments.freq <- table(Adele_sentiments_list)
 Adele_sentiments <- cbind.data.frame(names(sentiments.freq), as.integer(sentiments.freq))
 
-############EXTRACCIÓN DEL SENTIMIENTO DE LAS CANCIONES#####################
-words_sentiments <- get_sentiments(lexicon = "nrc") #Data frame palabra,sentimiento
-#Nos desacemos del titulo de las canciones
-AL <- split(ASCL[-2], ASCL$artist) #data frame of dataframes
-#create a data frame containing artist - list of words
-Artist_lyrics <- data.frame()
-Artist_sentiments <- data.frame()
-for (i in 1:length(AL)){
-  artist_words <- unlist(str_split(AL[i][[1]][,2], " "))
-  print(i)
-  if (length(artist_words) > 0){
-    Artist_lyrics <- rbind(Artist_lyrics, data.frame(AL[i][[1]][1,1], artist_words)) #dataframe Artist -word
-    sentiment_list <- list()
-    sentiment_list <- sentiment_extractor(artist_words) #returns a list of lists of sentiments
-    print(length(sentiment_list)) #estas son las palabras que tienen asociados sentimientos en el diccionario
-    Artist_sentiments <- rbind(Artist_sentiments, data.frame(AL[i][[1]][1,1], unlist(sentiment_list))) # dataframe Artist - sentiment
-  }
-}
-rm(artist_words, sentiment_list, i, AL)
-
-Artist_sentiments.freq <- table(Artist_sentiments)
-grid.table(Artist_sentiments.freq)
-#hacemos agrupaciones por artista y cogemos los sentimientos más presentes de cada uno
-Artist_most_used_sentiment <- data.frame(rownames(Artist_sentiments.freq), colnames(Artist_sentiments.freq)[apply(Artist_sentiments.freq, 1, which.max)])
-names(Artist_most_used_sentiment) <- c("Artists", "Sentiments")
-plot(Artist_most_used_sentiment$Sentiments, col = "ligblue")
 
 #################################################################################################################
 ################### OBTENCIÓN DEL PAIS DE CADA AUTOR #######################
@@ -299,7 +256,6 @@ data(world.cities)
 #ejecutamos diferentes loops para buscar el país de procedencia del artista teniendo en cuenta que pueden faltar detalles como
 # poner después del artista (banda) para que sea reconocible por wikipedia
 for(i in 1:length(artists$Artist)){
-  cat(i)
   pweb <- paste("https://es.wikipedia.org/wiki/", artists[i, 1], sep="")
   if (url.exists(pweb)){  
     page <- read_html(pweb)
@@ -339,7 +295,6 @@ for(i in 1:length(artists$Artist)){
 
 for(i in 1:length(artists$Artist)){
   if(is.na(artists$Country[i])){
-    cat(i)
     pweb <- paste("https://es.wikipedia.org/wiki/", artists[i, 1], "_(cantante)", sep="")
     if (url.exists(pweb)){  
       page <- read_html(pweb)
@@ -360,7 +315,6 @@ for(i in 1:length(artists$Artist)){
 
 for(i in 1:length(artists$Artist)){
   if(is.na(artists$Country[i])){
-    cat(i)
     pweb <- paste("https://en.wikipedia.org/wiki/", artists[i, 1], sep="")
     if (url.exists(pweb)){  
       page <- read_html(pweb)
@@ -381,7 +335,6 @@ for(i in 1:length(artists$Artist)){
 
 for(i in 1:length(artists$Artist)){
   if(is.na(artists$Country[i])){
-    cat(i)
     pweb <- paste("https://en.wikipedia.org/wiki/", artists[i, 1], "_(band)", sep="")
     if (url.exists(pweb)){  
       page <- read_html(pweb)
@@ -402,7 +355,6 @@ for(i in 1:length(artists$Artist)){
 
 for(i in 1:length(artists$Artist)){
   if(is.na(artists$Country[i])){
-    cat(i)
     pweb <- paste("https://en.wikipedia.org/wiki/", artists[i, 1], "_(singer)", sep="")
     if (url.exists(pweb)){  
       page <- read_html(pweb)
@@ -418,6 +370,12 @@ for(i in 1:length(artists$Artist)){
     else{
       artists[i,3] <- NA
     }
+  }
+}
+
+for(i in 1:length(artists$Artist)){
+  if(artists$Artist[i]%in%existing_countries_en){
+    artists$Artist[i] <- countrycode(artists$Artist[i], "country.name", "cldr.name.es")
   }
 }
 #buscamos que los artistas con mayor número de canciones tengan país de procedencia ya que serán más relevantes
