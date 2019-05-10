@@ -248,7 +248,7 @@ Adele_sentiments <- cbind.data.frame(names(sentiments.freq), as.integer(sentimen
 #Todos los países en castellano e ingles, para comprobar con las string que obtengamos
 existing_countries_es <- countrycode::codelist$cldr.name.es 
 existing_countries_en <- countrycode::codelist$cldr.name.en 
-
+#dataset con ciudades vinculadas a paises
 data(world.cities)
 #La intención es recorrer los artistas, crear la url de Wikipedia y encontrar la tabla que contenga la info que necesitamos
 
@@ -373,9 +373,13 @@ for(i in 1:length(artists$Artist)){
   }
 }
 
-for(i in 1:length(artists$Artist)){
-  if(artists$Artist[i]%in%existing_countries_en){
-    artists$Artist[i] <- countrycode(artists$Artist[i], "country.name", "cldr.name.es")
+#traducimos al castellano los paises obtenidos mediante el algoritmo
+for(i in 1:length(artists$Country)){
+  if(artists$Country[i]%in%existing_countries_en){
+    artists$Country[i] <- countrycode(artists$Country[i], "country.name", "cldr.name.es")
+  }
+  else if(artists$Country[i]=="UK"|artists$Country[i]=="USA"){
+    artists$Country[i] <- countrycode(artists$Country[i], "country.name", "cldr.name.es")
   }
 }
 #buscamos que los artistas con mayor número de canciones tengan país de procedencia ya que serán más relevantes
