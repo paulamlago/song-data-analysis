@@ -280,7 +280,7 @@ for(i in 1:length(artists$Artist)){
     
   } else {
     print(paste(i, " doesn't exists"))
-    artists <- artists[-i, ] #Si no está en ninguna de las pwebs -> borramos la fila
+    artists <- artists[c(-i), ] #Si no está en ninguna de las pwebs -> borramos la fila
   }
 }
 
