@@ -139,6 +139,8 @@ firstup <- function(x) {
   return(x)
 }
 
+url_exists <- function(x) url.exists(as.character(x))
+
 ##############################################################################################################################
 #################################################  EXTRACTION AND DATA STRUCTURE  ########################################################
 #primer dataset: songdata.csv
@@ -252,126 +254,134 @@ existing_countries_en <- countrycode::codelist$cldr.name.en
 data(world.cities)
 #La intención es recorrer los artistas, crear la url de Wikipedia y encontrar la tabla que contenga la info que necesitamos
 
-
 #ejecutamos diferentes loops para buscar el país de procedencia del artista teniendo en cuenta que pueden faltar detalles como
 # poner después del artista (banda) para que sea reconocible por wikipedia
 for(i in 1:length(artists$Artist)){
-  pweb <- paste("https://es.wikipedia.org/wiki/", artists[i, 1], sep="")
-  if (url.exists(pweb)){  
-    page <- read_html(pweb)
+  pwebs <- c(paste("https://es.wikipedia.org/wiki/", artists[i, 1], sep=""),
+             paste("https://es.wikipedia.org/wiki/", artists[i, 1], "_(banda)", sep=""),
+             paste("https://es.wikipedia.org/wiki/", artists[i, 1], "_(cantante)", sep=""),
+             paste("https://en.wikipedia.org/wiki/", artists[i, 1], sep=""),
+             paste("https://en.wikipedia.org/wiki/", artists[i, 1], "_(singer)", sep=""),
+             paste("https://en.wikipedia.org/wiki/", artists[i, 1], "_(band)", sep="")) #Todas las posibilidades
+  exists <- sapply(pwebs, url_exists)
+  if (any(exists) == TRUE){
+    index <- which(exists == TRUE)[1] #En el caso de que existan varias, cogemos la primera
+    print(i)
+    page <- read_html(pwebs[index])
     a <- page %>% html_nodes("table")
     country <- extract_country_es(a, existing_countries_es, world.cities)
     if(is.null(country)){
-      artists[i,3] <- NA
-    }
-    else{
-      artists[i,3] <- country
-    }
-  }
-  else{
-    artists[i,3] <- NA
-  }
-}
-
-for(i in 1:length(artists$Artist)){
-  if(is.na(artists$Country[i])){
-    pweb <- paste("https://es.wikipedia.org/wiki/", artists[i, 1], "_(banda)", sep="")
-    if (url.exists(pweb)){  
-      page <- read_html(pweb)
-      a <- page %>% html_nodes("table")
-      country <- extract_country_es(a, existing_countries_es, world.cities)
-      if(is.null(country)){
-        artists[i,3] <- NA
-      }
-      else{
-        artists[i,3] <- country
-      }
-    }
-    else{
-      artists[i,3] <- NA
-    }
-  }
-}
-
-for(i in 1:length(artists$Artist)){
-  if(is.na(artists$Country[i])){
-    pweb <- paste("https://es.wikipedia.org/wiki/", artists[i, 1], "_(cantante)", sep="")
-    if (url.exists(pweb)){  
-      page <- read_html(pweb)
-      a <- page %>% html_nodes("table")
-      country <- extract_country_es(a, existing_countries_es, world.cities)
-      if(is.null(country)){
-        artists[i,3] <- NA
-      }
-      else{
-        artists[i,3] <- country
-      }
-    }
-    else{
-      artists[i,3] <- NA
-    }
-  }
-}
-
-for(i in 1:length(artists$Artist)){
-  if(is.na(artists$Country[i])){
-    pweb <- paste("https://en.wikipedia.org/wiki/", artists[i, 1], sep="")
-    if (url.exists(pweb)){  
-      page <- read_html(pweb)
-      a <- page %>% html_nodes("table")
       country <- extract_country_en(a, existing_countries_en, world.cities)
       if(is.null(country)){
-        artists[i,3] <- NA
+        #Borramos la fila del dataframe
+        artists <- artists[-c(i), ]
       }
-      else{
-        artists[i,3] <- country
-      }
-    }
-    else{
-      artists[i,3] <- NA
-    }
+    } else { artists[i,3] <- country }
+    
+  } else {
+    print(paste(i, " doesn't exists"))
+    artists <- artists[-i, ] #Si no está en ninguna de las pwebs -> borramos la fila
   }
 }
 
-for(i in 1:length(artists$Artist)){
-  if(is.na(artists$Country[i])){
-    pweb <- paste("https://en.wikipedia.org/wiki/", artists[i, 1], "_(band)", sep="")
-    if (url.exists(pweb)){  
-      page <- read_html(pweb)
-      a <- page %>% html_nodes("table")
-      country <- extract_country_en(a, existing_countries_en, world.cities)
-      if(is.null(country)){
-        artists[i,3] <- NA
-      }
-      else{
-        artists[i,3] <- country
-      }
-    }
-    else{
-      artists[i,3] <- NA
-    }
-  }
-}
+# NA_Artists <- which(is.na(artists$Country)) #devuelve los índices de los paises que no tienen información
+# for(i in NA_Artists){
+#   pweb <- paste("https://es.wikipedia.org/wiki/", artists[i, 1], "_(banda)", sep="")
+#   if (url.exists(pweb)){
+#     page <- read_html(pweb)
+#     a <- page %>% html_nodes("table")
+#     country <- extract_country_es(a, existing_countries_es, world.cities)
+#     if(is.null(country)){
+#       artists[i,3] <- NA
+#     }
+#     else{
+#       artists[i,3] <- country
+#     }
+#   }
+#   else{
+#     artists[i,3] <- NA
+#   }
+# }
 
-for(i in 1:length(artists$Artist)){
-  if(is.na(artists$Country[i])){
-    pweb <- paste("https://en.wikipedia.org/wiki/", artists[i, 1], "_(singer)", sep="")
-    if (url.exists(pweb)){  
-      page <- read_html(pweb)
-      a <- page %>% html_nodes("table")
-      country <- extract_country_en(a, existing_countries_en, world.cities)
-      if(is.null(country)){
-        artists[i,3] <- NA
-      }
-      else{
-        artists[i,3] <- country
-      }
-    }
-    else{
-      artists[i,3] <- NA
-    }
-  }
-}
+# for(i in 1:length(artists$Artist)){
+#   if(is.na(artists$Country[i])){
+#     pweb <- paste("https://es.wikipedia.org/wiki/", artists[i, 1], "_(cantante)", sep="")
+#     if (url.exists(pweb)){  
+#       page <- read_html(pweb)
+#       a <- page %>% html_nodes("table")
+#       country <- extract_country_es(a, existing_countries_es, world.cities)
+#       if(is.null(country)){
+#         artists[i,3] <- NA
+#       }
+#       else{
+#         artists[i,3] <- country
+#       }
+#     }
+#     else{
+#       artists[i,3] <- NA
+#     }
+#   }
+# }
+# 
+# for(i in 1:length(artists$Artist)){
+#   if(is.na(artists$Country[i])){
+#     pweb <- paste("https://en.wikipedia.org/wiki/", artists[i, 1], sep="")
+#     if (url.exists(pweb)){  
+#       page <- read_html(pweb)
+#       a <- page %>% html_nodes("table")
+#       country <- extract_country_en(a, existing_countries_en, world.cities)
+#       if(is.null(country)){
+#         artists[i,3] <- NA
+#       }
+#       else{
+#         artists[i,3] <- country
+#       }
+#     }
+#     else{
+#       artists[i,3] <- NA
+#     }
+#   }
+# }
+# 
+# for(i in 1:length(artists$Artist)){
+#   if(is.na(artists$Country[i])){
+#     pweb <- paste("https://en.wikipedia.org/wiki/", artists[i, 1], "_(band)", sep="")
+#     if (url.exists(pweb)){  
+#       page <- read_html(pweb)
+#       a <- page %>% html_nodes("table")
+#       country <- extract_country_en(a, existing_countries_en, world.cities)
+#       if(is.null(country)){
+#         artists[i,3] <- NA
+#       }
+#       else{
+#         artists[i,3] <- country
+#       }
+#     }
+#     else{
+#       artists[i,3] <- NA
+#     }
+#   }
+# }
+# 
+# for(i in 1:length(artists$Artist)){
+#   if(is.na(artists$Country[i])){
+#     pweb <- paste("https://en.wikipedia.org/wiki/", artists[i, 1], "_(singer)", sep="")
+#     if (url.exists(pweb)){  
+#       page <- read_html(pweb)
+#       a <- page %>% html_nodes("table")
+#       country <- extract_country_en(a, existing_countries_en, world.cities)
+#       if(is.null(country)){
+#         artists[i,3] <- NA
+#       }
+#       else{
+#         artists[i,3] <- country
+#       }
+#     }
+#     else{
+#       artists[i,3] <- NA
+#     }
+#   }
+# }
 
 #traducimos al castellano los paises obtenidos mediante el algoritmo
 for(i in 1:length(artists$Country)){
