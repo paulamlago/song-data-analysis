@@ -285,7 +285,7 @@ grid.table(Artist_sentiments.freq)
 Artist_most_used_sentiment <- data.frame(rownames(Artist_sentiments.freq), colnames(Artist_sentiments.freq)[apply(Artist_sentiments.freq, 1, which.max)])
 names(Artist_most_used_sentiment) <- c("Artists", "Sentiments")
 plot(Artist_most_used_sentiment$Sentiments, col = "ligblue")
-
+names(Artist_sentiments) <- c("Artist", "sentiment")
 #################################################################################################################
 ################### OBTENCIÓN DEL PAIS DE CADA AUTOR #######################
 #Todos los países en castellano e ingles, para comprobar con las string que obtengamos
@@ -421,7 +421,6 @@ for(i in 1:length(artists$Artist)){
   }
 }
 #buscamos que los artistas con mayor número de canciones tengan país de procedencia ya que serán más relevantes
-
 
 rm(country)
 
