@@ -16,6 +16,10 @@ if (!require(dplyr)) {install.packages("plyr")}
 #################LIBRERIAS VISUALIZACION###################
 if (!require(wordcloud)) {install.packages("wordcloud")}
 if (!require(RColorBrewer)) {install.packages("RColorBrewer")}
+if (!require(gridExtra)) {install.packages("gridExtra")}
+if (!require(grid)) {install.packages("grid")}
+if (!require(ggplot2)) {install.packages("ggplot2")}
+
 ##########################################################
 library(maps)
 library(plyr)
@@ -30,6 +34,9 @@ library(stringi)
 library(ngram)
 library(qdapDictionaries)
 library(RCurl)
+library(gridExtra)
+library(grid)
+library(ggplot2)
 ###############################################################################################################################
 ##################################################DECLARACIÓN DE FUNCIONES#####################################################
 #Comprobamos si la palabra está en el diccionario
@@ -244,7 +251,36 @@ Adele_sentiments_list <- unlist(Adele_word_sentiment[,2])
 sentiments.freq <- table(Adele_sentiments_list)
 Adele_sentiments <- cbind.data.frame(names(sentiments.freq), as.integer(sentiments.freq))
 
+############EXTRACCIÓN DEL SENTIMIENTO DE LAS CANCIONES#####################
 
+words_sentiments <- get_sentiments(lexicon = "nrc") #Data frame palabra,sentimiento
+#Nos desacemos del titulo de las canciones
+AL <- split(ASCL[-2], ASCL$artist) #data frame of dataframes
+#create a data frame containing artist - list of words
+Artist_lyrics <- data.frame()
+Artist_sentiments <- data.frame()
+for (i in 1:length(AL)){
+  artist_words <- unlist(str_split(AL[i][[1]][,2], " "))
+  print(i)
+  if (length(artist_words) > 0){
+    Artist_lyrics <- rbind(Artist_lyrics, data.frame(AL[i][[1]][1,1], artist_words)) #dataframe Artist -word
+    sentiment_list <- list()
+    sentiment_list <- sentiment_extractor(artist_words) #returns a list of lists of sentiments
+    print(length(sentiment_list)) #estas son las palabras que tienen asociados sentimientos en el diccionario
+    Artist_sentiments <- rbind(Artist_sentiments, data.frame(AL[i][[1]][1,1], unlist(sentiment_list))) # dataframe Artist - sentiment
+  }
+}
+rm(artist_words, sentiment_list, i, AL)
+
+Artist_sentiments.freq <- table(Artist_sentiments)
+grid.table(Artist_sentiments.freq)
+
+#hacemos agrupaciones por artista y cogemos los sentimientos más presentes de cada uno
+Artist_most_used_sentiment <- data.frame(rownames(Artist_sentiments.freq), colnames(Artist_sentiments.freq)[apply(Artist_sentiments.freq, 1, which.max)])
+names(Artist_most_used_sentiment) <- c("Artists", "Sentiments")
+plot(Artist_most_used_sentiment$Sentiments, col = "ligblue")
+names(Artist_sentiments) <- c("Artist", "sentiment")
+#################################################################################################################
 #################################################################################################################
 ################### OBTENCIÓN DEL PAIS DE CADA AUTOR #######################
 #Todos los países en castellano e ingles, para comprobar con las string que obtengamos
@@ -277,112 +313,13 @@ for(i in 1:length(artists$Artist)){
         artists <- artists[-c(i), ]
       }
     } else { artists[i,3] <- country }
-    
   } else {
     print(paste(i, " doesn't exists"))
     artists <- artists[c(-i), ] #Si no está en ninguna de las pwebs -> borramos la fila
   }
 }
 
-# NA_Artists <- which(is.na(artists$Country)) #devuelve los índices de los paises que no tienen información
-# for(i in NA_Artists){
-#   pweb <- paste("https://es.wikipedia.org/wiki/", artists[i, 1], "_(banda)", sep="")
-#   if (url.exists(pweb)){
-#     page <- read_html(pweb)
-#     a <- page %>% html_nodes("table")
-#     country <- extract_country_es(a, existing_countries_es, world.cities)
-#     if(is.null(country)){
-#       artists[i,3] <- NA
-#     }
-#     else{
-#       artists[i,3] <- country
-#     }
-#   }
-#   else{
-#     artists[i,3] <- NA
-#   }
-# }
-
-# for(i in 1:length(artists$Artist)){
-#   if(is.na(artists$Country[i])){
-#     pweb <- paste("https://es.wikipedia.org/wiki/", artists[i, 1], "_(cantante)", sep="")
-#     if (url.exists(pweb)){  
-#       page <- read_html(pweb)
-#       a <- page %>% html_nodes("table")
-#       country <- extract_country_es(a, existing_countries_es, world.cities)
-#       if(is.null(country)){
-#         artists[i,3] <- NA
-#       }
-#       else{
-#         artists[i,3] <- country
-#       }
-#     }
-#     else{
-#       artists[i,3] <- NA
-#     }
-#   }
-# }
-# 
-# for(i in 1:length(artists$Artist)){
-#   if(is.na(artists$Country[i])){
-#     pweb <- paste("https://en.wikipedia.org/wiki/", artists[i, 1], sep="")
-#     if (url.exists(pweb)){  
-#       page <- read_html(pweb)
-#       a <- page %>% html_nodes("table")
-#       country <- extract_country_en(a, existing_countries_en, world.cities)
-#       if(is.null(country)){
-#         artists[i,3] <- NA
-#       }
-#       else{
-#         artists[i,3] <- country
-#       }
-#     }
-#     else{
-#       artists[i,3] <- NA
-#     }
-#   }
-# }
-# 
-# for(i in 1:length(artists$Artist)){
-#   if(is.na(artists$Country[i])){
-#     pweb <- paste("https://en.wikipedia.org/wiki/", artists[i, 1], "_(band)", sep="")
-#     if (url.exists(pweb)){  
-#       page <- read_html(pweb)
-#       a <- page %>% html_nodes("table")
-#       country <- extract_country_en(a, existing_countries_en, world.cities)
-#       if(is.null(country)){
-#         artists[i,3] <- NA
-#       }
-#       else{
-#         artists[i,3] <- country
-#       }
-#     }
-#     else{
-#       artists[i,3] <- NA
-#     }
-#   }
-# }
-# 
-# for(i in 1:length(artists$Artist)){
-#   if(is.na(artists$Country[i])){
-#     pweb <- paste("https://en.wikipedia.org/wiki/", artists[i, 1], "_(singer)", sep="")
-#     if (url.exists(pweb)){  
-#       page <- read_html(pweb)
-#       a <- page %>% html_nodes("table")
-#       country <- extract_country_en(a, existing_countries_en, world.cities)
-#       if(is.null(country)){
-#         artists[i,3] <- NA
-#       }
-#       else{
-#         artists[i,3] <- country
-#       }
-#     }
-#     else{
-#       artists[i,3] <- NA
-#     }
-#   }
-# }
-
+rm(i, country, pweb, pwebs, page, a)
 #traducimos al castellano los paises obtenidos mediante el algoritmo
 for(i in 1:length(artists$Country)){
   if(artists$Country[i]%in%existing_countries_en){
@@ -392,11 +329,25 @@ for(i in 1:length(artists$Country)){
     artists$Country[i] <- countrycode(artists$Country[i], "country.name", "cldr.name.es")
   }
 }
-#buscamos que los artistas con mayor número de canciones tengan país de procedencia ya que serán más relevantes
 
-
-rm(country)
-
+artists[,1] <- str_replace_all(artists[,1], "_", " ")
+artists[,1] <- toupper(artists[,1])
+Artist_most_used_sentiment[,1] <- toupper(Artist_most_used_sentiment[,1])
+Artist_most_used_sentiment <- Artist_most_used_sentiment[-c(1),]
+Country_sentiment <- data.frame()
+for (a in 2:nrow(artists)){
+  artist <- artists[a,]
+  if (!is.na(artist$Country) && any(Artist_most_used_sentiment$Artists == artist$Artist)){
+    index <- which(Artist_most_used_sentiment$Artists == artist$Artist)
+    Country_sentiment <- rbind(Country_sentiment, data.frame(artist$Country, Artist_most_used_sentiment[index, 2]))
+  }
+}
+names(Country_sentiment) <- c("Country", "sentiment")
+rm(a, artist)
+tg = gridExtra::tableGrob(Country_sentiment)
+h = grid::convertHeight(sum(tg$heights), "in", TRUE)
+w = grid::convertWidth(sum(tg$widths), "in", TRUE)
+ggplot2::ggsave("country_sentimentsFrequency.pdf", tg, width=w, height=h, limitsize = FALSE)
 ########################################################################################################################
 ##############################VISUALIZACION DE DATOS######################
 plot(auths_count) #visualizacion de los datos antes de agrupar
