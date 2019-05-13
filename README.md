@@ -2,8 +2,8 @@
 * [Datasests](#datasets)
 * [Data Cleaning](#data-cleaning)
 * [Words Frequency](#words-frequency)
-* [Sentiments frecuency](#sentiments-frequency)
-* [Web Mining: Country Extraction](#web-mining:-country-extraction)
+* [Sentiments Frecuency](#sentiments-frequency)
+* [Web Mining: Country Extraction](#web-mining-country-extraction)
 
 ## Datasets
 To do such study, we have obtained the information from [Kaggle](https://www.kaggle.com/). The sets we will work with are the following: 
