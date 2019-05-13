@@ -1,9 +1,9 @@
-# Song data analysis
-* [Datasests](#datasets)
-* [Data Cleaning](#data-cleaning)
-* [Words Frecuency](#words-frecuency)
-* [Sentiments Frecuency](#sentiments-frecuency)
-* [Web Mining: Country Extraction](#web-mining-country-extraction)
+# Song data analysis: Contents
+1. [Datasests](#datasets)
+2. [Data Cleaning](#data-cleaning)
+3. [Words Frecuency](#words-frecuency)
+4. [Sentiments Frecuency](#sentiments-frecuency)
+5. [Web Mining: Country Extraction](#web-mining-country-extraction)
 
 ## Datasets
 To do such study, we have obtained the information from [Kaggle](https://www.kaggle.com/). The sets we will work with are the following: 
