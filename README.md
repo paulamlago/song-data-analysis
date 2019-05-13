@@ -101,5 +101,5 @@ pwebs <- c(paste("https://es.wikipedia.org/wiki/", artists[i, 1], sep=""),
              paste("https://en.wikipedia.org/wiki/", artists[i, 1], "_(singer)", sep=""),
              paste("https://en.wikipedia.org/wiki/", artists[i, 1], "_(band)", sep=""))
 ```
-Those are all the formats that we have found in which an artist or band web page is shown. After that, by using the function ```R  exists <- sapply(pwebs, url_exists)``` we obtain which of the following links exists, and just by taking the first one that exists we can access the table that contains the personal information.
+Those are all the formats that we have found in which an artist or band web page is shown. After that, by using the function ```  exists <- sapply(pwebs, url_exists)``` we obtain which of the following links exists, and just by taking the first one that exists we can access the table that contains the personal information.
 
