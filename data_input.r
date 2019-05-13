@@ -1,6 +1,7 @@
+
 if (!require(stringr)) {install.packages("stringr")}
 if (!require(rvest)) {install.packages("rvest")}
-if (!require(tm)) {install.packages("tm")} # Si no funciona la instalaciÃÆÃÂ³n, probar instalando antes el paquete XML
+if (!require(tm)) {install.packages("tm")} # Si no funciona la instalaciÃƒÂ³n, probar instalando antes el paquete XML
 if (!require(SnowballC)) {install.packages("SnowballC")}
 if (!require(rlist)) {install.packages("rlist")}
 #install.packages("hash")
@@ -11,17 +12,21 @@ if (!require(countrycode)) {install.packages("countrycode")}
 if (!require(rvest)) {install.packages("rvest")}
 if (!require(tidytext)) {install.packages("tidytext")}
 if (!require(dplyr)) {install.packages("dplyr")}
-if (!require(maps)) {install.packages("maps")}
-if (!require(plyr)) {install.packages("plyr")}
+if (!require(dplyr)) {install.packages("maps")}
+if (!require(dplyr)) {install.packages("plyr")}
+if (!require(dplyr)) {install.packages("data.table")}
+if (!require(dplyr)) {install.packages("cluster")}
 #################LIBRERIAS VISUALIZACION###################
 if (!require(wordcloud)) {install.packages("wordcloud")}
 if (!require(RColorBrewer)) {install.packages("RColorBrewer")}
 if (!require(gridExtra)) {install.packages("gridExtra")}
 if (!require(grid)) {install.packages("grid")}
 if (!require(ggplot2)) {install.packages("ggplot2")}
+
 ##########################################################
-library(dplyr)
 library(maps)
+library(cluster)
+library(data.table)
 library(plyr)
 library(rvest)
 library(countrycode)
@@ -149,6 +154,30 @@ firstup <- function(x) {
 
 url_exists <- function(x) url.exists(as.character(x))
 
+#' Translate with R
+#'
+#' Translate Keywords or/and text with the Google Translate API
+#' The Functions allows to translate keywords or sentences using the Google Translate API.
+#' To use this function you need to get a API-Key for the Google Translate API <https://cloud.google.com/translate/docs/?hl=en>.
+#' @param text The keyword/sentence/text you want to translate
+#' @param API_Key Your API Key. You get the API Key here: <https://cloud.google.com/translate/docs/?hl=en>
+#' @param target The Language target your text translated to. For German 'de'. 
+#' @param source The Language your given text/keyword is. For example 'en' - english 
+#' translate()
+#' @examples
+#' \dontrun{
+#' translate(text = "R is cool", API_Key = "XXXXXXXXXXX", target = "de", source = "en")
+#' }
+
+
+translate <- function(text, API_Key, target = "en", source = "es") {
+  b <- paste0('{"q": ["',text,'"],"target": "',target,'","source": "',source,'","format": "text"}')
+  url <- paste0("https://translation.googleapis.com/language/translate/v2?key=", API_Key)
+  x <- httr::POST(url, body = b)
+  x <- jsonlite::fromJSON(rawToChar(x$content))
+  x <- x$data$translations
+  return(x$translatedText[1])
+}
 ##############################################################################################################################
 #################################################  EXTRACTION AND DATA STRUCTURE  ########################################################
 #primer dataset: songdata.csv
@@ -335,6 +364,23 @@ h = grid::convertHeight(sum(tg$heights), "in", TRUE)
 w = grid::convertWidth(sum(tg$widths), "in", TRUE)
 ggplot2::ggsave("country_sentimentsFrequency.pdf", tg, width=w, height=h, limitsize = FALSE)
 cs <- split(Country_sentiment, Country_sentiment$Country)
+
+t1 <- table(Country_sentiment)
+df <- data.frame(Country=character(), Sentiment=character())
+names(df) <- c("Country", "Sentiment")
+for (i in 1:nrow(t1)) {
+  df <- add_row(df, Country=rownames(t1)[i], Sentiment=names(which.max(t1[i,])))
+}
+df2 <- data.frame(Sent=integer())
+k <- table(df)
+for (i in 1:ncol(k)) {
+  df2 <- add_row(df2, Sent=sum(k[,i]))
+}
+row.names(df2) <- c("anger", "positive", "negative")
+t2 <- t(t1)
+df3 <- data.frame(rbind(t2))
+
+plot(df3$Estados.Unidos)
 ########################################################################################################################
 ##############################VISUALIZACION DE DATOS######################
 plot(auths_count) #visualizacion de los datos antes de agrupar
