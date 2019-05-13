@@ -1,17 +1,18 @@
 # Song data analysis: Contents
-// rehacer el indice
 1. [Datasests](#datasets)
 2. [Development metodology: KDD](#development-metodology-kdd)
     1. [Creating The Target Data Set](#creating-the-target-data-set)
         * [Data Cleaning And Transformation](#data-cleaning-and-transformation)
-        * [Web Mining: Country Extraction](#web-mining-country-extraction)
+        * [Sentiment Extraction](#sentiment-extraction)
+        * [Procedence Country](#procedence-country)
+        * [Example Of The Final Dataset](#example-of-the-final-dataset)
     2. [Data Exploration](#data-exploration)
        * [Words Frecuency](#words-frecuency)
        * [Sentiments Frecuency](#sentiments-frecuency)
-    3. [Data Mining Task: Clustering](#data-mining-task-clustering)
-    4. [Data Mining Algorithm](#data-mining-algorithm)
-    5. [Results](#results)
-
+    3. [Data Mining Algorithm](#data-mining-algorithm)
+       * [Main Words And Sentiments](#main-words-and-sentiments)
+       * [Web Mining: Country Extraction](#web-mining-country-extraction)
+    4. [Results](#results)
 3. [Conclusions And Future Work](#conclusions-and-future-work)
 
 # Datasets
@@ -29,15 +30,23 @@ While the second one shows more information than the first dataset, such as the 
 
 Both datasets needs a preprocesing to remove the extra information before starting to work.
 
-# Development metodology: KDD
+# Development methodology: KDD
 
-contar porqué, resumen
+The most suitable methodology for this project is KDD, we realized that some iterations would be necessary in order to gather, transform and interpretate the data and, since the raw data was already selected and ready to work with, it had to begin with a selection process. In order to work efficiently, a target data structure was established.   
 
 ## Creating The Target Data Set
-The final dataset is composed by a dataframe containing each artist's most frecuent sentiment and a second dataset containing the relation artist and country. The intersection of both datasets will be the final dataset.
+The final dataset is composed by a dataframe containing each artist's most frecuent sentiment and a second dataset containing the relation artist and country. 
+The intersection of both datasets will be the final dataset.
 
 ### Data Cleaning And Transformation
-Both input datasets needs to be reestructured, the first one has an extra column and the second dataset has two extra columns belonging to the genre of the song and the release year. Futhermore the order of the columns of both datasets needs to be set, so the second one has to be reordered to merge both dataframes. Finally, an extract of the final resulting dataframe will be the following, containing in the first column the artists, the song name and finally the lyrics. Some extracts of the final dataset, which contains 419887 entries are the following.
+Both input datasets need to be reestructured, the first one has an extra column and the second dataset has two extra columns belonging to the genre of the song and the release year. Futhermore the order of the columns of both datasets needs to be set, so the second one has to be reordered to merge both dataframes.
+Lyrics could contain useless words, or signs that may lead to a wrong data interpretation. The text cleaning made at this point to avoid such situation consists on erasing the storpwords such as conjunctions or articles, but also the song's typical sounds, as it can be seen in the next piece of code.
+```R
+ASCL[,3] <- removeWords(as.character(ASCL[,3]), words = c(stopwords("english"), "oh", "ah", "eh", "uh", "ma"))  #stopwords estan en minuscula
+ASCL[,3] <- stripWhitespace(ASCL[,3])
+ASCL[,3] <- removePunctuation(ASCL[,3])
+```
+Finally, an extract of the final resulting dataframe will be the following, containing in the first column the artists, the song name and finally the lyrics. Some extracts of the final dataset, which contains 419887 entries are the following.
 
 ![alt text](/Memoria/Imagenes/pinkfloyd.png)
 
@@ -47,26 +56,21 @@ Lyrics contain words that are not useful or that include weird characters, some 
 ```R
 is.word  <- function(x) x %in% GradyAugmented
 ```
-Next, making use of the aforementioned function, the "get_existing_words" function is developed, which name says its functionallity. We can use such function to remove choirs and other words that may appear in the lyrics.
+Next, making use of the aforementioned function, the "get_existing_words" [Main words and sentiments](#web-mining-main-words-and-sentiments)function is developed, which name indicates its functionallity. 
+
+
+The second dataframe is built directly from the first one, matching the frequency of each artist based on the amount of songs in the datasets, with its name.
 ```R
-get_existing_words <- function(x){
-  lyric <- list()
-  all_words <- unlist(stri_extract_all_words(x))
-  for (w in all_words) {
-    if (is.word(w)){
-      lyric <- c(lyric, w)
-    }
-  }
-  return(unlist(lyric))
+artists <- cbind(as.data.frame(table(ASCL$artist), stringsAsFactors = FALSE), NA)
+```
+It is needed to properly write the artist name (i.e. first letter of each word to upper case)
+```R
+for (i in 1:length(artists$Var1)) {
+  artists[i, 1] <- paste(unlist(firstup(split_words(artists[i, 1]))), collapse = "_")  
 }
 ```
-As this funcion has to process every word on every lyric of 419887 songs, it takes too long to execute and we can't afford that computation capacity. Although it would be usefull, we will directly take the important words while extracting the sentiments present on each song. The text cleaning made at this point consists on erasing the storpwords such as conjunctions or articles, but also the song's typical sounds, as it can be seen in the next piece of code.
+for a better subsequent cleaning.
 
-```R
-ASCL[,3] <- removeWords(as.character(ASCL[,3]), words = c(stopwords("english"), "oh", "ah", "eh", "uh", "ma"))  #stopwords estan en minuscula
-ASCL[,3] <- stripWhitespace(ASCL[,3])
-ASCL[,3] <- removePunctuation(ASCL[,3])
-```
 ### Sentiment Extraction
 Based on the words extraction from the song lyrics, and using an existing dictionary which returns as key an existing relevant word and as value, the sentiment that is attached to it. 
 ```R
@@ -116,8 +120,7 @@ Futhermore, if we study the most used words in a subset containing 400 songs, we
 
 ![alt tex](/Memoria/Imagenes/Rplot_words.png)
 
-As before, we can distinguish that the most used word by the Bitish band and other songs is **love**.
-
+With a higher frequency in the word **love**.
 ### Sentiments Frecuency
 In order to understand the sentiment extraction from the song lyrics, we have explored which are the sentiments more used by the singer Adele in 12 of her songs. Before seeing the results, we established the hypothesis that the main sentiment in her work is *sadness* or *negativity*. The results can be seen in the images below.
 
@@ -150,10 +153,26 @@ To conclude, we have extracted the most frecuent sentiment for each artist or ba
 
 ![alt tex](/Memoria/Imagenes/most_frecuent_sentiments.png)
 
-## Data Mining Task: Clustering
-
 ## Data Mining Algorithm
-## Web Mining: Country Extraction
+### Main Words And Sentiments
+A differentiation among all different words in every song for every artist is key to perform any other action over the dataset or reach a realistic conclusion. Implementing this function returns a list of words that appear in each song and belong to the dictionary. We can use such function to remove choirs and other words that may appear in the lyrics.
+```R
+get_existing_words <- function(x){
+  lyric <- list()
+  all_words <- unlist(stri_extract_all_words(x))
+  for (w in all_words) {
+    if (is.word(w)){
+      lyric <- c(lyric, w)
+    }
+  }
+  return(unlist(lyric))
+}
+```
+As this funcion has to process every word on every lyric of 419887 songs, it takes too long to execute and we can't afford that computation capacity. Although it would be usefull, we will directly take the important words while extracting the sentiments present on each song. 
+
+**Contar sobre los sentimientos**
+
+### Web Mining: Country Extraction
 In order to establish a relation between the artist's sentiment and the country's we need to obtain the precedence country of each artist in the dataset. Using **Wikipedia**, we can obtain that information, taking into account that each artist's url can have different formats, we have tried with every possibility, traversing each artist in the dataset.
 
 ```R
@@ -165,8 +184,13 @@ pwebs <- c(paste("https://es.wikipedia.org/wiki/", artists[i, 1], sep=""),
              paste("https://en.wikipedia.org/wiki/", artists[i, 1], "_(band)", sep=""))
 ```
 Those are all the formats that we have found in which an artist or band web page is shown. After that, by using the function ```  exists <- sapply(pwebs, url_exists)``` we obtain which of the following links exists, and just by taking the first one that exists we can access the table that contains the personal information.
+We would finally call these functions to obtain the country from either an english or an spanish source.
+```R
+country <- extract_country_es(a, existing_countries_es, world.cities)
+country <- extract_country_en(a, existing_countries_en, world.cities)
+```
 ## Results
 
 # Conclusions And Future Work
-Qué hemos conseguido, qué no, y porqué. Cosas que reconocemos que nos ha faltado y puntos fuertes en los que hemos trabajado mucho
-También contar qué podemos mejorar en el futuro
+In conclusion, we have obtained a close summary of sentiments based on the most used words for each artist which has been grouped by the country of origin. We can now tell what the main theme of the songs in a certain country is.
+It is yet room for improvement and we are working on finding a relation between the artist-country-sentiment triple, as for a correct traduction and interpretation of foreing lyrics.
