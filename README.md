@@ -4,6 +4,7 @@
 3. [Words Frecuency](#words-frecuency)
 4. [Sentiments Frecuency](#sentiments-frecuency)
 5. [Web Mining: Country Extraction](#web-mining-country-extraction)
+6. [Conclusions And Future Work](#conclusions-and-future-work)
 
 ## Datasets
 To do such study, we have obtained the information from [Kaggle](https://www.kaggle.com/). The sets we will work with are the following: 
