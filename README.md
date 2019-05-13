@@ -42,7 +42,7 @@ The intersection of both datasets will be the final dataset.
 Both input datasets need to be reestructured, the first one has an extra column and the second dataset has two extra columns belonging to the genre of the song and the release year. Futhermore the order of the columns of both datasets needs to be set, so the second one has to be reordered to merge both dataframes.
 Lyrics could contain useless words, or signs that may lead to a wrong data interpretation. The text cleaning made at this point to avoid such situation consists on erasing the storpwords such as conjunctions or articles, but also the song's typical sounds, as it can be seen in the next piece of code.
 ```R
-ASCL[,3] <- removeWords(as.character(ASCL[,3]), words = c(stopwords("english"), "oh", "ah", "eh", "uh", "ma"))  #stopwords estan en minuscula
+ASCL[,3] <- removeWords(as.character(ASCL[,3]), words = c(stopwords("english"), "oh", "ah", "eh", "uh", "ma")) 
 ASCL[,3] <- stripWhitespace(ASCL[,3])
 ASCL[,3] <- removePunctuation(ASCL[,3])
 ```
@@ -56,7 +56,7 @@ Lyrics contain words that are not useful or that include weird characters, some 
 ```R
 is.word  <- function(x) x %in% GradyAugmented
 ```
-Next, making use of the aforementioned function, the "get_existing_words" [Main words and sentiments](#web-mining-main-words-and-sentiments)function is developed, which name indicates its functionallity. 
+Next, making use of the aforementioned function, the "get_existing_words" [Main Words And Sentiments](#web-mining-main-words-and-sentiments) function is developed, which name indicates its functionallity. 
 
 
 The second dataframe is built directly from the first one, matching the frequency of each artist based on the amount of songs in the datasets, with its name.
