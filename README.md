@@ -33,9 +33,16 @@ Both datasets needs a preprocesing to remove the extra information before starti
 contar porqué, resumen
 
 ## Creating The Target Data Set
-Cual es el dataset final etc
+The final dataset is composed by a dataframe containing each artist's most frecuent sentiment and a second dataset containing the relation artist and country. The intersection of both datasets will be the final dataset.
+
 ### Data Cleaning And Transformation
-Lyrics contain words that are not useful while finding the main feeling and meaning, so we have kept just the most meaningful , removing the so called stopwords. Moreover, we have created several functions relying on the library ```qdapDictionaries```.  First, "is.word", that returns whether the word introduced as a parameter is in the english-spanish language.
+Both input datasets needs to be reestructured, the first one has an extra column and the second dataset has two extra columns belonging to the genre of the song and the release year. Futhermore the order of the columns of both datasets needs to be set, so the second one has to be reordered to merge both dataframes. Finally, an extract of the final resulting dataframe will be the following, containing in the first column the artists, the song name and finally the lyrics. Some extracts of the final dataset, which contains 419887 entries are the following.
+
+![alt text](/Memoria/Imagenes/pinkfloyd.png)
+
+![alt text](/Memoria/Imagenes/amaral.png)
+
+Lyrics contain words that are not useful or that include weird characters, some of them can be seen in the last image. Characters not found in the enlish dictionary doesn't show, instead a weird character appears. This words are not useful while finding the main feeling and meaning, so we have kept just the most meaningful , removing them and also the so called stopwords. Moreover, we have created several functions relying on the library ```qdapDictionaries```.  First, "is.word", that returns whether the word introduced as a parameter is in the english-spanish language.
 ```R
 is.word  <- function(x) x %in% GradyAugmented
 ```
@@ -52,6 +59,9 @@ get_existing_words <- function(x){
   return(unlist(lyric))
 }
 ```
+
+As this funcion has to process every word on every lyric of 419887 songs, it takes too long to execute and we can't afford that computation capacity. Although it would be usefull, we will need to find another way to do it.
+
 ### Web Mining: Country Extraction
 In order to establish a relation between the artist's sentiment and the country's we need to obtain the precedence country of each artist in the dataset. Using **Wikipedia**, we can obtain that information, taking into account that each artist's url can have different formats, we have tried with every possibility, traversing each artist in the dataset.
 
