@@ -1,12 +1,19 @@
 # Song data analysis: Contents
 1. [Datasests](#datasets)
-2. [Data Cleaning](#data-cleaning)
-3. [Words Frecuency](#words-frecuency)
-4. [Sentiments Frecuency](#sentiments-frecuency)
-5. [Web Mining: Country Extraction](#web-mining-country-extraction)
-6. [Conclusions And Future Work](#conclusions-and-future-work)
+2. [Development metodology: KDD](#development-metodology-kdd)
+    1. [Creating The Target Data Set](#creating-the-target-data-set)
+        * [Data Cleaning And Transformation](#data-cleaning-and-transformation)
+        * [Web Mining: Country Extraction](#web-mining-country-extraction)
+    2. [Data Exploration](#data-exploration)
+       * [Words Frecuency](#words-frecuency)
+       * [Sentiments Frecuency](#sentiments-frecuency)
+    3. [Data Mining Task: Clustering](#data-mining-task-clustering)
+    4. [Data Mining Algorithm](#data-mining-algorithm)
+    5. [Results](#results)
 
-## Datasets
+3. [Conclusions And Future Work](#conclusions-and-future-work)
+
+# Datasets
 To do such study, we have obtained the information from [Kaggle](https://www.kaggle.com/). The sets we will work with are the following: 
 * [Dataset 1](https://www.kaggle.com/mousehead/songlyrics)
 * [Dataset 2](https://www.kaggle.com/gyani95/380000-lyrics-from-metrolyrics)
@@ -21,7 +28,13 @@ While the second one shows more information than the first dataset, such as the 
 
 Both datasets needs a preprocesing to remove the extra information before starting to work.
 
-# Data Cleaning
+# Development metodology: KDD
+
+contar porqué, resumen
+
+## Creating The Target Data Set
+Cual es el dataset final etc
+### Data Cleaning And Transformation
 Lyrics contain words that are not useful while finding the main feeling and meaning, so we have kept just the most meaningful , removing the so called stopwords. Moreover, we have created several functions relying on the library ```qdapDictionaries```.  First, "is.word", that returns whether the word introduced as a parameter is in the english-spanish language.
 ```R
 is.word  <- function(x) x %in% GradyAugmented
@@ -39,7 +52,21 @@ get_existing_words <- function(x){
   return(unlist(lyric))
 }
 ```
-# Words Frecuency
+### Web Mining: Country Extraction
+In order to establish a relation between the artist's sentiment and the country's we need to obtain the precedence country of each artist in the dataset. Using **Wikipedia**, we can obtain that information, taking into account that each artist's url can have different formats, we have tried with every possibility, traversing each artist in the dataset.
+
+```R
+pwebs <- c(paste("https://es.wikipedia.org/wiki/", artists[i, 1], sep=""),
+             paste("https://es.wikipedia.org/wiki/", artists[i, 1], "_(banda)", sep=""),
+             paste("https://es.wikipedia.org/wiki/", artists[i, 1], "_(cantante)", sep=""),
+             paste("https://en.wikipedia.org/wiki/", artists[i, 1], sep=""),
+             paste("https://en.wikipedia.org/wiki/", artists[i, 1], "_(singer)", sep=""),
+             paste("https://en.wikipedia.org/wiki/", artists[i, 1], "_(band)", sep=""))
+```
+Those are all the formats that we have found in which an artist or band web page is shown. After that, by using the function ```  exists <- sapply(pwebs, url_exists)``` we obtain which of the following links exists, and just by taking the first one that exists we can access the table that contains the personal information.
+
+## Data Exploration
+### Words Frecuency
 In order to understand the structure of the data in the dataframe obtained, here we show the words with the higher frequency in some of the most relevant Queen songs.
 
 ![alt text](/Memoria/Imagenes/AnotherOneBitesTheDust.png)
@@ -60,7 +87,7 @@ Futhermore, if we study the most used words in a subset containing 400 songs, we
 
 As before, we can distinguish that the most used word by the Bitish band and other songs is **love**.
 
-# Sentiments Frecuency
+### Sentiments Frecuency
 
 Based on the words extraction from the song lyrics, and using an existing dictionary which returns as key an existing relevant word and as value, the sentiment that is attached to it. 
 ```R
@@ -91,18 +118,11 @@ To conclude, we have extracted the most frecuent sentiment for each artist or ba
 
 ![alt tex](/Memoria/Imagenes/most_frecuent_sentiments.png)
 
-# Web Mining: Country Extraction
-In order to establish a relation between the artist's sentiment and the country's we need to obtain the precedence country of each artist in the dataset. Using **Wikipedia**, we can obtain that information, taking into account that each artist's url can have different formats, we have tried with every possibility, traversing each artist in the dataset.
+## Data Mining Task: Clustering
 
-```R
-pwebs <- c(paste("https://es.wikipedia.org/wiki/", artists[i, 1], sep=""),
-             paste("https://es.wikipedia.org/wiki/", artists[i, 1], "_(banda)", sep=""),
-             paste("https://es.wikipedia.org/wiki/", artists[i, 1], "_(cantante)", sep=""),
-             paste("https://en.wikipedia.org/wiki/", artists[i, 1], sep=""),
-             paste("https://en.wikipedia.org/wiki/", artists[i, 1], "_(singer)", sep=""),
-             paste("https://en.wikipedia.org/wiki/", artists[i, 1], "_(band)", sep=""))
-```
-Those are all the formats that we have found in which an artist or band web page is shown. After that, by using the function ```  exists <- sapply(pwebs, url_exists)``` we obtain which of the following links exists, and just by taking the first one that exists we can access the table that contains the personal information.
+## Data Mining Algorithm
+
+## Results
 
 # Conclusions And Future Work
 Qué hemos conseguido, qué no, y porqué. Cosas que reconocemos que nos ha faltado y puntos fuertes en los que hemos trabajado mucho
