@@ -83,3 +83,16 @@ To conclude, we have extracted the most frecuent sentiment for each artist or ba
 
 ![alt tex](/Memoria/Imagenes/most_frecuent_sentiments.png)
 
+# Web mining: Country extraction
+In order to establish a relation between the artist's sentiment and the country's we need to obtain the precedence country of each artist in the dataset. Using **Wikipedia**, we can obtain that information, taking into account that each artist's url can have different formats, we have tried with every possibility, traversing each artist in the dataset.
+
+```R
+pwebs <- c(paste("https://es.wikipedia.org/wiki/", artists[i, 1], sep=""),
+             paste("https://es.wikipedia.org/wiki/", artists[i, 1], "_(banda)", sep=""),
+             paste("https://es.wikipedia.org/wiki/", artists[i, 1], "_(cantante)", sep=""),
+             paste("https://en.wikipedia.org/wiki/", artists[i, 1], sep=""),
+             paste("https://en.wikipedia.org/wiki/", artists[i, 1], "_(singer)", sep=""),
+             paste("https://en.wikipedia.org/wiki/", artists[i, 1], "_(band)", sep=""))
+```
+Those are all the formats that we have found in which an artist or band web page is shown. After that, by using the function ```R  exists <- sapply(pwebs, url_exists)``` we obtain which of the following links exists, and just by taking the first one that exists we can access the table that contains the personal information.
+
