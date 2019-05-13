@@ -59,14 +59,41 @@ get_existing_words <- function(x){
   return(unlist(lyric))
 }
 ```
-As this funcion has to process every word on every lyric of 419887 songs, it takes too long to execute and we can't afford that computation capacity. Although it would be usefull, we will need to find another way to do it.
+As this funcion has to process every word on every lyric of 419887 songs, it takes too long to execute and we can't afford that computation capacity. Although it would be usefull, we will directly take the important words while extracting the sentiments present on each song. The text cleaning made at this point consists on erasing the storpwords such as conjunctions or articles, but also the song's typical sounds, as it can be seen in the next piece of code.
 
-### Procedence country
+```R
+ASCL[,3] <- removeWords(as.character(ASCL[,3]), words = c(stopwords("english"), "oh", "ah", "eh", "uh", "ma"))  #stopwords estan en minuscula
+ASCL[,3] <- stripWhitespace(ASCL[,3])
+ASCL[,3] <- removePunctuation(ASCL[,3])
+```
+### Sentiment Extraction
+Based on the words extraction from the song lyrics, and using an existing dictionary which returns as key an existing relevant word and as value, the sentiment that is attached to it. 
+```R
+words_sentiments <- get_sentiments(lexicon = "nrc")
+```
+It may happen that a single word is attached to several sentiments, as it can be seen in the picture below.
+
+![alt tex](/Memoria/Imagenes/words_sentiments.png)
+
+Then, we have traversed in a loop all the different artists and we have concatenated their lyrics, this way, by getting the intersection of each word and the dicctionary above, we get the sentiments that those words evoque. This way, ge can get a list of all the sentiments that an artist share with each word int he lyrics.
+
+![alt tex](/Memoria/Imagenes/Adelesentiments.png)
+
+After getting this intermediate dataframe, we can extract the frecuency in which each sentiment shows and get the maximum one, to generalice and obtain a general view of the sentiments that each artist try to share based on the R sentiments dicctionary.
+
+![alt tex](/Memoria/Imagenes/artistsentiment.png)
+
+### Procedence Country
 The second dataframe needed to continue with the study is the one that establishes the relation between the artists or bands with its procedence country. The metodology followed to obtain that data is explained in the section [Web Mining: Country Extraction](#web-mining-country-extraction). The final dataset is shown in the following picture.
 
 ![alt text](/Memoria/Imagenes/artistcountry.png)
 
 The fist column belongs to the artist, the second to the number of songs and the last column is the procedence country.
+
+### Example Of The Final Dataset
+After extracting each artist's primary sentiment and the procedence country of every artist, we can elaborate a table in which the frequency of feelings will be shown.
+
+![alt text](/Memoria/Imagenes/sentimenttablebycountry.png)
 
 ## Data Exploration
 ### Words Frecuency
@@ -92,13 +119,7 @@ As before, we can distinguish that the most used word by the Bitish band and oth
 
 ### Sentiments Frecuency
 
-Based on the words extraction from the song lyrics, and using an existing dictionary which returns as key an existing relevant word and as value, the sentiment that is attached to it. 
-```R
-words_sentiments <- get_sentiments(lexicon = "nrc")
-```
-It may happen that a single word is attached to several sentiments, as it can be seen in the picture below.
 
-![alt tex](/Memoria/Imagenes/words_sentiments.png)
 
 Using the word extraction technique previously explained and this dictionary, we have explored which are the sentiments more used by the singer Adele in 12 of her songs. Before seeing the results, we established the hypothesis that the main sentiment in her work is *sadness* or *negativity*. The results can be seen in the images below.
 
