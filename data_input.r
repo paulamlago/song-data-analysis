@@ -329,10 +329,12 @@ for (a in 2:nrow(artists)){
 }
 names(Country_sentiment) <- c("Country", "sentiment")
 rm(a, artist)
+artists <- artists[-c(which(is.na(artists$Country))),]
 tg = gridExtra::tableGrob(Country_sentiment)
 h = grid::convertHeight(sum(tg$heights), "in", TRUE)
 w = grid::convertWidth(sum(tg$widths), "in", TRUE)
 ggplot2::ggsave("country_sentimentsFrequency.pdf", tg, width=w, height=h, limitsize = FALSE)
+cs <- split(Country_sentiment, Country_sentiment$Country)
 ########################################################################################################################
 ##############################VISUALIZACION DE DATOS######################
 plot(auths_count) #visualizacion de los datos antes de agrupar
