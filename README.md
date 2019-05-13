@@ -1,8 +1,8 @@
 # Song data analysis
 * [Datasests](#datasets)
 * [Data Cleaning](#data-cleaning)
-* [Words Frequency](#words-frequency)
-* [Sentiments Frecuency](#sentiments-frequency)
+* [Words Frecuency](#words-frecuency)
+* [Sentiments Frecuency](#sentiments-frecuency)
 * [Web Mining: Country Extraction](#web-mining-country-extraction)
 
 ## Datasets
