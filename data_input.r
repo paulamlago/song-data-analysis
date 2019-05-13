@@ -1,6 +1,6 @@
 if (!require(stringr)) {install.packages("stringr")}
 if (!require(rvest)) {install.packages("rvest")}
-if (!require(tm)) {install.packages("tm")} # Si no funciona la instalaciÃƒÂ³n, probar instalando antes el paquete XML
+if (!require(tm)) {install.packages("tm")} # Si no funciona la instalaciÃÆÃÂ³n, probar instalando antes el paquete XML
 if (!require(SnowballC)) {install.packages("SnowballC")}
 if (!require(rlist)) {install.packages("rlist")}
 #install.packages("hash")
@@ -11,16 +11,16 @@ if (!require(countrycode)) {install.packages("countrycode")}
 if (!require(rvest)) {install.packages("rvest")}
 if (!require(tidytext)) {install.packages("tidytext")}
 if (!require(dplyr)) {install.packages("dplyr")}
-if (!require(dplyr)) {install.packages("maps")}
-if (!require(dplyr)) {install.packages("plyr")}
+if (!require(maps)) {install.packages("maps")}
+if (!require(plyr)) {install.packages("plyr")}
 #################LIBRERIAS VISUALIZACION###################
 if (!require(wordcloud)) {install.packages("wordcloud")}
 if (!require(RColorBrewer)) {install.packages("RColorBrewer")}
 if (!require(gridExtra)) {install.packages("gridExtra")}
 if (!require(grid)) {install.packages("grid")}
 if (!require(ggplot2)) {install.packages("ggplot2")}
-
 ##########################################################
+library(dplyr)
 library(maps)
 library(plyr)
 library(rvest)
@@ -37,9 +37,10 @@ library(RCurl)
 library(gridExtra)
 library(grid)
 library(ggplot2)
+
 ###############################################################################################################################
-##################################################DECLARACIÓN DE FUNCIONES#####################################################
-#Comprobamos si la palabra está en el diccionario
+##################################################DECLARACIÃN DE FUNCIONES#####################################################
+#Comprobamos si la palabra estÃ¡ en el diccionario
 is.word  <- function(x) x %in% GradyAugmented
 
 get_existing_words <- function(x){ #Tarda mucho :(
@@ -160,9 +161,9 @@ aux <- aux[,c(2, 1, 3)]#mismo orden de columas que aux
 ASCL<- rbind(ASCL, aux)#concatenar los data frames
 rm(aux)
 ASCL <- data.frame(ASCL)
-# Convertimos a minúsculas cada palabra, no solo de la letra de las canciones, sino del título de la canción
-#Problema -> Al hacer apply devuelve una lista en vez de un data.frame, así que volvemos a convertirlo a data.frame
-# la función t() devuelve la matriz transpuesta, ya que por alguna razón apply devuelve las columnas como filas y al revés
+# Convertimos a minÃºsculas cada palabra, no solo de la letra de las canciones, sino del tÃ­tulo de la canciÃ³n
+#Problema -> Al hacer apply devuelve una lista en vez de un data.frame, asÃ­ que volvemos a convertirlo a data.frame
+# la funciÃ³n t() devuelve la matriz transpuesta, ya que por alguna razÃ³n apply devuelve las columnas como filas y al revÃ©s
 
 #for(i in 1:length(ASCL))
 #  ASCL[i] <- lapply(ASCL[i],toupper) #pasar el dataframe a mayusc
@@ -177,7 +178,7 @@ ASCL[,3] <- removePunctuation(ASCL[,3])
 ASCL[,3] <- removeNumbers(ASCL[,3]) # Por si acaso
 
 #ARTIST INFO CLEANING 
-artists <- cbind(as.data.frame(table(ASCL$artist), stringsAsFactors = FALSE), NA) #aquí van los artistas con su frecuencia en el dataframe
+artists <- cbind(as.data.frame(table(ASCL$artist), stringsAsFactors = FALSE), NA) #aquÃ­ van los artistas con su frecuencia en el dataframe
 #separamos las palabras que componen el nombre del artista por espacios
 artists[,1] <- str_replace_all(artists[,1],"-"," ")
 artists[,1] <- str_replace_all(artists[,1],"_"," ")
@@ -186,9 +187,9 @@ for (i in 1:length(artists$Var1)) {
   artists[i, 1] <- paste(unlist(firstup(split_words(artists[i, 1]))), collapse = "_")  
 }
 #pasamos los articulos que mas aparecen a minuscula
-artists[,1] <- str_replace_all(artists[,1],"Of","of") #queda pulir los artículos de los artistas
-artists[,1] <- str_replace_all(artists[,1],"This","of") #queda pulir los artículos de los artistas
-artists[,1] <- str_replace_all(artists[,1],"With","of") #queda pulir los artículos de los artistas
+artists[,1] <- str_replace_all(artists[,1],"Of","of") #queda pulir los artÃ­culos de los artistas
+artists[,1] <- str_replace_all(artists[,1],"This","of") #queda pulir los artÃ­culos de los artistas
+artists[,1] <- str_replace_all(artists[,1],"With","of") #queda pulir los artÃ­culos de los artistas
 artists[,1] <- str_replace_all(artists[,1]," ","_") #en las url los espacios se sustituyen por '_'
 #cambaimos el nombre de las columnas
 colnames(artists) <- c("Artist", "Freq","Country")
@@ -197,11 +198,11 @@ colnames(artists) <- c("Artist", "Freq","Country")
 #################################### DATA INTERPRETATION ##############################################
 
 #GET ALL WORDS IN DATASET 
-existing_words_in_all_set <- get_existing_words(ASCL[,3]) #comprueba palabras en inglés y castellano siempre en minusuclas
+existing_words_in_all_set <- get_existing_words(ASCL[,3]) #comprueba palabras en inglÃ©s y castellano siempre en minusuclas
 words.freq <- table(existing_words_in_all_set)#extraemos la frecuencia con la que aparece cada palabra
 words_data <- cbind.data.frame(names(words.freq),as.integer(words.freq)) #unimos palabras con frecuencias y combinamos
 names(words_data) <- c("word", "repetitions")
-words_data <- words_data[order(words_data$repetitions, decreasing = TRUE)[1:10], ] #Cogemos las 10 palabras con más apariciones
+words_data <- words_data[order(words_data$repetitions, decreasing = TRUE)[1:10], ] #Cogemos las 10 palabras con mÃ¡s apariciones
 
 #Get words from a certain band
 queen_songs <- ASCL[ASCL[1] == "Queen",,]
@@ -211,14 +212,14 @@ queen_songs <- data.frame(queen_songs[2],queen_songs[3]) #We don't need the band
 songs_to_select <- which(queen_songs$song %in% c("love of my life", "somebody to love", "bohemian rhapsody", "killer queen", "the show must go on"))
 queen_songs_selected <- queen_songs[songs_to_select,]
 pal <- colorRampPalette(colors = c("blue", "lightblue"))(length(words_data[[1]]))
-for(s in 1:nrow(queen_songs_selected)){ #Veremos las palabras más utilizadas en cada canción
+for(s in 1:nrow(queen_songs_selected)){ #Veremos las palabras mÃ¡s utilizadas en cada canciÃ³n
   song <- queen_songs_selected[s,,]
   print(song$song)
   song_lyric <- get_existing_words(song$lyrics)
   words.freq <- table(song_lyric)
   words_data <- cbind.data.frame(names(words.freq),as.integer(words.freq))
   names(words_data) <- c("word", "repetitions")
-  words_data <- words_data[order(words_data$repetitions, decreasing = TRUE)[1:10], ] #Cogemos las 10 palabras con más apariciones
+  words_data <- words_data[order(words_data$repetitions, decreasing = TRUE)[1:10], ] #Cogemos las 10 palabras con mÃ¡s apariciones
   fname <- paste("/home/paulamlago/Documents/Uni/MIN/Analisis-de-letras-de-canciones/", str_replace_all(song$song, " ",""), ".png", sep="")
   png(filename = fname)
   barplot(words_data$repetitions, 
@@ -231,31 +232,13 @@ for(s in 1:nrow(queen_songs_selected)){ #Veremos las palabras más utilizadas en
   dev.off()
 }
 
-#EXTRACCIÓN DEL SENTIMIENTO DE CADA CANCIÓN
-words_sentiments <- get_sentiments(lexicon = "nrc") #Data frame palabra,sentimiento
-#En primer lugar, tenemos que dividir el texto de las canciones en palabras
-Adele_songs <- data.frame(ASCL[134:145,])[3] #Cogemos 3 porque no nos interesa nada más que la letra
-Adele_tokens <- strsplit(Adele_songs[, 1], " ")
-Adele_all_tokens <- unlist(Adele_tokens)
-Adele_all_tokens <- stripWhitespace(Adele_all_tokens)
-Adele_sentiments <- list()
-Adele_word_sentiment <- data.frame()
-for (token in Adele_all_tokens){
-  if (any(words_sentiments$word == token)){
-    Adele_sentiments <- words_sentiments[which(words_sentiments$word == token), 2]
-    Adele_word_sentiment <- rbind(df, data.frame(token, Adele_sentiments))
-  }
-}
-
-Adele_sentiments_list <- unlist(Adele_word_sentiment[,2])
-sentiments.freq <- table(Adele_sentiments_list)
-Adele_sentiments <- cbind.data.frame(names(sentiments.freq), as.integer(sentiments.freq))
-
-############EXTRACCIÓN DEL SENTIMIENTO DE LAS CANCIONES#####################
+############EXTRACCIÃN DEL SENTIMIENTO DE LAS CANCIONES#####################
 
 words_sentiments <- get_sentiments(lexicon = "nrc") #Data frame palabra,sentimiento
 #Nos desacemos del titulo de las canciones
-AL <- split(ASCL[-2], ASCL$artist) #data frame of dataframes
+AL <- ASCL[-c(2)] #data frame of dataframes
+AL <- split(AL, AL$artist) #split doesn't work as it doesn't show some artists
+
 #create a data frame containing artist - list of words
 Artist_lyrics <- data.frame()
 Artist_sentiments <- data.frame()
@@ -273,25 +256,27 @@ for (i in 1:length(AL)){
 rm(artist_words, sentiment_list, i, AL)
 
 Artist_sentiments.freq <- table(Artist_sentiments)
-grid.table(Artist_sentiments.freq)
-
-#hacemos agrupaciones por artista y cogemos los sentimientos más presentes de cada uno
+tg = gridExtra::tableGrob(Artist_sentiments.freq)
+h = grid::convertHeight(sum(tg$heights), "in", TRUE)
+w = grid::convertWidth(sum(tg$widths), "in", TRUE)
+ggplot2::ggsave("sentimentsForEachArtist.pdf", tg, width=w, height=h, limitsize = FALSE)
+#hacemos agrupaciones por artista y cogemos los sentimientos mÃ¡s presentes de cada uno
 Artist_most_used_sentiment <- data.frame(rownames(Artist_sentiments.freq), colnames(Artist_sentiments.freq)[apply(Artist_sentiments.freq, 1, which.max)])
 names(Artist_most_used_sentiment) <- c("Artists", "Sentiments")
 plot(Artist_most_used_sentiment$Sentiments, col = "ligblue")
 names(Artist_sentiments) <- c("Artist", "sentiment")
 #################################################################################################################
 #################################################################################################################
-################### OBTENCIÓN DEL PAIS DE CADA AUTOR #######################
-#Todos los países en castellano e ingles, para comprobar con las string que obtengamos
+################### OBTENCIÃN DEL PAIS DE CADA AUTOR #######################
+#Todos los paÃ­ses en castellano e ingles, para comprobar con las string que obtengamos
 existing_countries_es <- countrycode::codelist$cldr.name.es 
 existing_countries_en <- countrycode::codelist$cldr.name.en 
 #dataset con ciudades vinculadas a paises
 data(world.cities)
-#La intención es recorrer los artistas, crear la url de Wikipedia y encontrar la tabla que contenga la info que necesitamos
+#La intenciÃ³n es recorrer los artistas, crear la url de Wikipedia y encontrar la tabla que contenga la info que necesitamos
 
-#ejecutamos diferentes loops para buscar el país de procedencia del artista teniendo en cuenta que pueden faltar detalles como
-# poner después del artista (banda) para que sea reconocible por wikipedia
+#ejecutamos diferentes loops para buscar el paÃ­s de procedencia del artista teniendo en cuenta que pueden faltar detalles como
+# poner despuÃ©s del artista (banda) para que sea reconocible por wikipedia
 for(i in 1:length(artists$Artist)){
   pwebs <- c(paste("https://es.wikipedia.org/wiki/", artists[i, 1], sep=""),
              paste("https://es.wikipedia.org/wiki/", artists[i, 1], "_(banda)", sep=""),
@@ -315,7 +300,7 @@ for(i in 1:length(artists$Artist)){
     } else { artists[i,3] <- country }
   } else {
     print(paste(i, " doesn't exists"))
-    artists <- artists[c(-i), ] #Si no está en ninguna de las pwebs -> borramos la fila
+    artists <- artists[c(-i), ] #Si no estÃ¡ en ninguna de las pwebs -> borramos la fila
   }
 }
 
@@ -353,7 +338,7 @@ ggplot2::ggsave("country_sentimentsFrequency.pdf", tg, width=w, height=h, limits
 plot(auths_count) #visualizacion de los datos antes de agrupar
 wordcloud(words_data[,1], freq = words_data[,2],min.freq = 1, random.order = FALSE,color= brewer.pal(8, "Dark2"), max.words = 500)
 
-#Visualización 10 palabras más utilizadas
+#VisualizaciÃ³n 10 palabras mÃ¡s utilizadas
 pal <- colorRampPalette(colors = c("blue", "lightblue"))(length(words_data[[1]]))
 barplot(words_data$repetitions, 
         names.arg = words_data$word,
@@ -367,7 +352,7 @@ words.freq <- table(queen_most_used_words)
 words_data <- cbind.data.frame(names(words.freq),as.integer(words.freq))
 names(words_data) <- c("word", "repetitions")
 pal <- colorRampPalette(colors = c("orange", "white"))(length(words_data[[1]]))
-words_data <- words_data[order(words_data$repetitions, decreasing = TRUE)[1:15], ] #Cogemos las 15 palabras con más apariciones
+words_data <- words_data[order(words_data$repetitions, decreasing = TRUE)[1:15], ] #Cogemos las 15 palabras con mÃ¡s apariciones
 fname <- paste("/home/paulamlago/Documents/Uni/MIN/Analisis-de-letras-de-canciones/queen_most_used_words", ".png", sep="")
 png(filename = fname)
 barplot(words_data$repetitions, 
