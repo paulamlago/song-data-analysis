@@ -18,4 +18,19 @@ We are 3 students from the last years of study, deeply interested in Big Data an
   </tr>   
 </table>
 
+<table align = "center" border="0" cellpadding="0" cellspacing="0" style="background-color:#FFFFFF; border:0px solid #CCCCCC;">
+  <tr>
+    <td valign="center" style="color:#505050; font-family:Georgia, serif; font-size:12px; font-style:italic; line-height:100%; padding-top:10px; padding-right;10px; padding-bottom:10px; padding-left:10px;">
+      <p>Descripción Jaime.</p>
+      <p><img src = "https://banner2.kisspng.com/20180718/vws/kisspng-email-logo-bounce-address-computer-icons-message-online-application-5b4f433eed6ac1.5937710415319212149725.jpg" width="15" /> emailjaime</p>
+      <p><img src = "https://image.flaticon.com/icons/svg/25/25231.svg" width = "15"> jaimeuser</p>
+    </td>
+    <td style="padding-top:10px; padding-right:10px; padding-bottom:10px;">
+      <img src="https://avatars0.githubusercontent.com/u/24291803?s=400&v=4" 
+       width="200" 
+       alt="Jaime Del Rey García"/>
+    </td>
+  </tr>   
+</table>
+
 We hope you found our work interesting, contact us if you have any doubt or if you want to continue working on it.
