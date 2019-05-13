@@ -1,4 +1,5 @@
 # Song data analysis: Contents
+// rehacer el indice
 1. [Datasests](#datasets)
 2. [Development metodology: KDD](#development-metodology-kdd)
     1. [Creating The Target Data Set](#creating-the-target-data-set)
@@ -118,10 +119,7 @@ Futhermore, if we study the most used words in a subset containing 400 songs, we
 As before, we can distinguish that the most used word by the Bitish band and other songs is **love**.
 
 ### Sentiments Frecuency
-
-
-
-Using the word extraction technique previously explained and this dictionary, we have explored which are the sentiments more used by the singer Adele in 12 of her songs. Before seeing the results, we established the hypothesis that the main sentiment in her work is *sadness* or *negativity*. The results can be seen in the images below.
+In order to understand the sentiment extraction from the song lyrics, we have explored which are the sentiments more used by the singer Adele in 12 of her songs. Before seeing the results, we established the hypothesis that the main sentiment in her work is *sadness* or *negativity*. The results can be seen in the images below.
 
 ![alt tex](/Memoria/Imagenes/Adele_sentiments.png)
 
@@ -137,6 +135,16 @@ The barplot shows that the most recurrent feeling is *positive*, which has resul
 As we previously studied Queen's most used words, we have also extracted which are the most present sentiments.
 
 ![alt tex](/Memoria/Imagenes/Queen_wordcloud.png)
+
+To continue with a more significant study, we will elaborate on the artist with more frequency in the dataset, which is *Dolly Parton*, from the USA, with a total of 755 songs.
+
+![alt tex](/Memoria/Imagenes/DollyParton.png)
+
+The most used word is, as in the previous examples, *love*, which will give us a hint to know which is the most relevant sentiment present on this singer's songs.
+
+![alt tex](/Memoria/Imagenes/DollyPartonSentiments.png)
+
+As it can be seen in the previous bar graph, the most frequent sentiment is *positive*, and it is followed by *joy*.
 
 To conclude, we have extracted the most frecuent sentiment for each artist or band in the dataset and we have shown in the following graph which are the feelings more frecuently used.
 
