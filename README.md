@@ -3,7 +3,13 @@ To do such study, we have obtained the information from [Kaggle](https://www.kag
 * [Dataset 1](https://www.kaggle.com/mousehead/songlyrics)
 * [Dataset 2](https://www.kaggle.com/gyani95/380000-lyrics-from-metrolyrics)
 
-// explicar formato de las dos fuentes
+The first dataset has the following format. Artist, song name, web page containing extra information and finally the lyric.
+![alt text](/Memoria/Imagenes/dataset1.png)
+
+While the second one shows more information than the first dataset, such as the genre of the song or the release year, which we don't need.
+![alt text](/Memoria/Imagenes/dataset2.png)
+
+Both datasets needs a preprocesing to remove the extra information before starting to work.
 
 # Data Cleaning
 Lyrics contain words that are not useful while finding the main feeling and meaning, so we have kept just the most meaningful , removing the so called stopwords. Moreover, we have created several functions relying on the library ```qdapDictionaries```.  First, "is.word", that returns whether the word introduced as a parameter is in the english-spanish language.
