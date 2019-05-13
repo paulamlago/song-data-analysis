@@ -103,3 +103,6 @@ pwebs <- c(paste("https://es.wikipedia.org/wiki/", artists[i, 1], sep=""),
 ```
 Those are all the formats that we have found in which an artist or band web page is shown. After that, by using the function ```  exists <- sapply(pwebs, url_exists)``` we obtain which of the following links exists, and just by taking the first one that exists we can access the table that contains the personal information.
 
+# Conclusions And Future Work
+Qué hemos conseguido, qué no, y porqué. Cosas que reconocemos que nos ha faltado y puntos fuertes en los que hemos trabajado mucho
+También contar qué podemos mejorar en el futuro
