@@ -1,3 +1,10 @@
+# Song data analysis
+* [Datasests](#datasets)
+* [Data Cleaning](#data-cleaning)
+* [Words Frequency](#words-frequency)
+* [Sentiments frecuency](#sentiments-frequency)
+* [Web mining: Country extraction](#web-mining:-country-extraction)
+
 ## Datasets
 To do such study, we have obtained the information from [Kaggle](https://www.kaggle.com/). The sets we will work with are the following: 
 * [Dataset 1](https://www.kaggle.com/mousehead/songlyrics)
@@ -31,7 +38,7 @@ get_existing_words <- function(x){
   return(unlist(lyric))
 }
 ```
-# Words frecuency
+# Words Frecuency
 In order to understand the structure of the data in the dataframe obtained, here we show the words with the higher frequency in some of the most relevant Queen songs.
 
 ![alt text](/Memoria/Imagenes/AnotherOneBitesTheDust.png)
@@ -52,7 +59,7 @@ Futhermore, if we study the most used words in a subset containing 400 songs, we
 
 As before, we can distinguish that the most used word by the Bitish band and other songs is **love**.
 
-# Sentiments frecuency
+# Sentiments Frecuency
 
 Based on the words extraction from the song lyrics, and using an existing dictionary which returns as key an existing relevant word and as value, the sentiment that is attached to it. 
 ```R
@@ -83,7 +90,7 @@ To conclude, we have extracted the most frecuent sentiment for each artist or ba
 
 ![alt tex](/Memoria/Imagenes/most_frecuent_sentiments.png)
 
-# Web mining: Country extraction
+# Web Mining: Country Extraction
 In order to establish a relation between the artist's sentiment and the country's we need to obtain the precedence country of each artist in the dataset. Using **Wikipedia**, we can obtain that information, taking into account that each artist's url can have different formats, we have tried with every possibility, traversing each artist in the dataset.
 
 ```R
