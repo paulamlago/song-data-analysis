@@ -3,9 +3,9 @@ Project developed in R to study the different sentiments appearing in songs depe
 
 We are 3 students from the last years of study, deeply interested in Big Data and exploring the different techniques to work with such a big quantity of data.
 
-<table align = "center" border="0" cellpadding="0" cellspacing="0" style="background-color:#FFFFFF; border:0px solid #CCCCCC;">
+<table align = "center" border="0" cellpadding="0" cellspacing="0" style="background-color:#FFFFFF; border:0px solid #CCCCCC;" width="500px">
   <tr>
-    <td valign="center" style="color:#505050; font-family:Georgia, serif; font-size:12px; font-style:italic; line-height:100%; padding-top:10px; padding-right;10px; padding-bottom:10px; padding-left:10px;">
+    <td valign="center" style="color:#505050; font-family:Georgia, serif; font-size:12px; font-style:italic; line-height:100%; padding-top:10px; padding-right;10px; padding-bottom:10px; padding-left:10px;" width="500px">
       <p>Computer science engineer always trying to explore new music.</p>
       <p><img src = "https://banner2.kisspng.com/20180718/vws/kisspng-email-logo-bounce-address-computer-icons-message-online-application-5b4f433eed6ac1.5937710415319212149725.jpg" width="15" /> pmunoz06@ucm.es</p>
       <p><img src = "https://image.flaticon.com/icons/svg/25/25231.svg" width = "15"> paulamlago</p>
@@ -18,7 +18,7 @@ We are 3 students from the last years of study, deeply interested in Big Data an
   </tr>   
 </table>
 
-<table align = "center" border="0" cellpadding="0" cellspacing="0" style="background-color:#FFFFFF; border:0px solid #CCCCCC;">
+<table align = "center" border="0" cellpadding="0" cellspacing="0" style="background-color:#FFFFFF; border:0px solid #CCCCCC;" width="500px">
   <tr>
     <td style="padding-top:10px; padding-right:10px; padding-bottom:10px;">
       <img src="https://avatars0.githubusercontent.com/u/24291803?s=400&v=4" 
