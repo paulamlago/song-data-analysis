@@ -4,9 +4,11 @@ To do such study, we have obtained the information from [Kaggle](https://www.kag
 * [Dataset 2](https://www.kaggle.com/gyani95/380000-lyrics-from-metrolyrics)
 
 The first dataset has the following format. Artist, song name, web page containing extra information and finally the lyric.
+
 ![alt text](/Memoria/Imagenes/dataset1.png)
 
 While the second one shows more information than the first dataset, such as the genre of the song or the release year, which we don't need.
+
 ![alt text](/Memoria/Imagenes/dataset2.png)
 
 Both datasets needs a preprocesing to remove the extra information before starting to work.
