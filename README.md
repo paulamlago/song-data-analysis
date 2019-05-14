@@ -30,7 +30,7 @@ While the second one shows more information than the first dataset, such as the 
 
 Both datasets needs a preprocesing to remove the extra information before starting to work.
 
-# Development methodology: KDD
+# Development Methodology: KDD
 
 The most suitable methodology for this project is KDD, we realized that some iterations would be necessary in order to gather, transform and interpretate the data and, since the raw data was already selected and ready to work with, it had to begin with a selection process. In order to work efficiently, a target data structure was established.   
 
