@@ -164,7 +164,8 @@ get_existing_words <- function(x){
   return(unlist(lyric))
 }
 ```
-As this funcion has to process every word on every lyric of 419887 songs, it takes too long to execute and we can't afford that computation capacity. Although it would be usefull, we will directly take the important words while extracting the sentiments present on each song. 
+As this funcion has to process every word on every lyric of 419887 songs, it takes too long to execute and we can't afford that computation capacity. Nevertheless, it can be used to explore the words frecuency, as it is made for a single artist, as it can be seen in section [Words Frecuency](#words-frecuency).
+We will directly take the important words while extracting the sentiments present on each song. 
 
 **Contar sobre los sentimientos**
 
