@@ -226,23 +226,11 @@ colnames(artists) <- c("Artist", "Freq","Country")
 ##########################################################################################################################
 #################################### DATA INTERPRETATION ##############################################
 
-#GET ALL WORDS IN DATASET 
-existing_words_in_all_set <- get_existing_words(ASCL[,3]) #comprueba palabras en inglÃ©s y castellano siempre en minusuclas
-words.freq <- table(existing_words_in_all_set)#extraemos la frecuencia con la que aparece cada palabra
-words_data <- cbind.data.frame(names(words.freq),as.integer(words.freq)) #unimos palabras con frecuencias y combinamos
-names(words_data) <- c("word", "repetitions")
-words_data <- words_data[order(words_data$repetitions, decreasing = TRUE)[1:10], ] #Cogemos las 10 palabras con mÃ¡s apariciones
-
 #Get words from a certain band
-queen_songs <- ASCL[ASCL[1] == "Queen",,]
-queen_songs <- data.frame(queen_songs[2],queen_songs[3]) #We don't need the band name
-
-#Choose certain songs to explore
-songs_to_select <- which(queen_songs$song %in% c("love of my life", "somebody to love", "bohemian rhapsody", "killer queen", "the show must go on"))
-queen_songs_selected <- queen_songs[songs_to_select,]
-pal <- colorRampPalette(colors = c("blue", "lightblue"))(length(words_data[[1]]))
-for(s in 1:nrow(queen_songs_selected)){ #Veremos las palabras mÃ¡s utilizadas en cada canciÃ³n
-  song <- queen_songs_selected[s,,]
+songs <- ASCL[ASCL[1] == "Dolly Parton",,]
+songs <- data.frame(songs[2],songs[3]) #We don't need the band name
+for(s in 1:nrow(songs)){ #Veremos las palabras mÃ¡s utilizadas en cada canciÃ³n
+  song <- songs[s,,]
   print(song$song)
   song_lyric <- get_existing_words(song$lyrics)
   words.freq <- table(song_lyric)
@@ -253,7 +241,6 @@ for(s in 1:nrow(queen_songs_selected)){ #Veremos las palabras mÃ¡s utilizadas 
   png(filename = fname)
   barplot(words_data$repetitions, 
           names.arg = words_data$word,
-          col = pal,
           xlab = "Words",
           ylab = "Repetitions",
           main =song$song,
@@ -379,8 +366,6 @@ for (i in 1:ncol(k)) {
 row.names(df2) <- c("anger", "positive", "negative")
 t2 <- t(t1)
 df3 <- data.frame(rbind(t2))
-
-plot(df3$Estados.Unidos)
 ########################################################################################################################
 ##############################VISUALIZACION DE DATOS######################
 plot(auths_count) #visualizacion de los datos antes de agrupar
@@ -395,18 +380,26 @@ barplot(words_data$repetitions,
         ylab = "Repetitions")
 
 #Visualize the most used words from that band
-queen_most_used_words <- get_existing_words(queen_songs$lyrics)
-words.freq <- table(queen_most_used_words)
+songs_most_used_words <- get_existing_words(songs$lyrics)
+words.freq <- table(songs_most_used_words)
 words_data <- cbind.data.frame(names(words.freq),as.integer(words.freq))
 names(words_data) <- c("word", "repetitions")
 pal <- colorRampPalette(colors = c("orange", "white"))(length(words_data[[1]]))
 words_data <- words_data[order(words_data$repetitions, decreasing = TRUE)[1:15], ] #Cogemos las 15 palabras con mÃ¡s apariciones
-fname <- paste("/home/paulamlago/Documents/Uni/MIN/Analisis-de-letras-de-canciones/queen_most_used_words", ".png", sep="")
-png(filename = fname)
 barplot(words_data$repetitions, 
         names.arg = words_data$word,
         col = pal,
         xlab = "Words",
         ylab = "Repetitions",
         las = 2)
+
+Dolly_sentiments <- Artist_sentiments[which(Artist_sentiments$Artist == "Dolly Parton"), 2]
+ds <- table(Dolly_sentiments)
+ds <- cbind.data.frame(names(ds), as.integer(ds))
+names(ds) <- c("sentiment", "Frequency")
+barplot(ds$Frequency,
+        names.arg = ds$sentiment,
+        xlab = "Words",
+        ylab = "Repetitions",
+        las = 1)
 dev.off()
