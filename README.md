@@ -1,6 +1,6 @@
 # Song data analysis: Contents
 1. [Datasests](#datasets)
-2. [Development metodology: KDD](#development-metodology-kdd)
+2. [Development Metodology: KDD](#development-metodology-kdd)
     1. [Creating The Target Data Set](#creating-the-target-data-set)
         * [Data Cleaning And Transformation](#data-cleaning-and-transformation)
         * [Sentiment Extraction](#sentiment-extraction)
