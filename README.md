@@ -72,11 +72,7 @@ for (i in 1:length(artists$Var1)) {
 for a better subsequent cleaning.
 
 ### Sentiment Extraction
-Based on the words extraction from the song lyrics, and using an existing dictionary which returns as key an existing relevant word and as value, the sentiment that is attached to it. 
-```R
-words_sentiments <- get_sentiments(lexicon = "nrc")
-```
-It may happen that a single word is attached to several sentiments, as it can be seen in the picture below.
+Based on the words extraction from the song lyrics, and using an existing dictionary which returns as key an existing relevant word and as value, the sentiment that is attached to it. It may happen that a single word is attached to several sentiments, as it can be seen in the picture below.
 
 ![alt tex](/Memoria/Imagenes/words_sentiments.png)
 
@@ -164,10 +160,42 @@ get_existing_words <- function(x){
   return(unlist(lyric))
 }
 ```
-As this funcion has to process every word on every lyric of 419887 songs, it takes too long to execute and we can't afford that computation capacity. Nevertheless, it can be used to explore the words frecuency, as it is made for a single artist, as it can be seen in section [Words Frecuency](#words-frecuency).
-We will directly take the important words while extracting the sentiments present on each song. 
+As this funcion has to process every word on every lyric of 419887 songs, it takes too long to execute and we can't afford that computation capacity. Nevertheless, it can be used to explore the words frecuency, as it is made for a single artist, as it can be seen in section [Words Frecuency](#words-frecuency). We will directly take the important words while extracting the sentiments present on each song. 
 
-**Contar sobre los sentimientos**
+After having all the different words that an artist has used, we can associate a sentiment to each of them thanks to the following dictionary.
+
+```R
+words_sentiments <- get_sentiments(lexicon = "nrc")
+```
+
+The fist step was to organize the big quantity of data present, as we had 419887 entries to process, we grouped them by artist, obtaining a dataframe of lists containing as key the artist and as value the list of lyrics of the existing songs.
+
+![alt tex](/Memoria/Imagenes/artistlyrics-dataframe.png)
+
+Finally, the algorithm traverses every artist's lyrics and saves in a dataframe the most common sentiment for that artist, by using a function called *sentiment_extractor*, which returns all the sentiments in a list of words.
+
+```R
+function(token_list){
+  words_sentiments <- get_sentiments(lexicon = "nrc")
+  sentiments <- list()
+  for (token in token_list){
+    if (any(words_sentiments$word == token)){
+      sentiments <- c(sentiments, words_sentiments[which(words_sentiments$word == token), 2])
+    }
+  }
+  
+  return(sentiments)
+}
+```
+After obtaining the sentiment list, we elaborate a table, wich automatically assings frecuencies and then create the final dataframe *Artist_most_used_sentiment*
+
+```R
+Artist_sentiments.freq <- table(Artist_sentiments)
+Artist_most_used_sentiment <- data.frame(rownames(Artist_sentiments.freq), colnames(Artist_sentiments.freq)[apply(Artist_sentiments.freq, 1, which.max)])
+names(Artist_most_used_sentiment) <- c("Artists", "Sentiments")
+```
+
+This lines return the last dataframe shown in [Sentiment Extraction](#sentiment-extraction).
 
 ### Web Mining: Country Extraction
 In order to establish a relation between the artist's sentiment and the country's we need to obtain the precedence country of each artist in the dataset. Using **Wikipedia**, we can obtain that information, taking into account that each artist's url can have different formats, we have tried with every possibility, traversing each artist in the dataset.
