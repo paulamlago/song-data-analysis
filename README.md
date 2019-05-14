@@ -220,6 +220,20 @@ To conclude, we have extracted the most frecuent sentiment for each artist or ba
 
 ![alt tex](/Memoria/Imagenes/most_frecuent_sentiments.png)
 
+Some of the most relevant countries which have the higher frecuency of songs in our datasets are the following.
+
+![alt tex](/Memoria/Imagenes/USASentiments.png)
+
+![alt tex](/Memoria/Imagenes/UKSentiments.png)
+
+![alt tex](/Memoria/Imagenes/SwedenSentiments.png)
+
+![alt tex](/Memoria/Imagenes/Germany.png)
+
+![alt tex](/Memoria/Imagenes/SpainSentiments.png)
+
+Again, the sentiments have been generalized into anger, positive or negative.
+
 # Conclusions And Future Work
 In conclusion, we have obtained a close summary of sentiments based on the most used words for each artist which has been grouped by the country of origin. We can now tell what the main theme of the songs in a certain country is.
 It is yet room for improvement and we are working on finding a relation between the artist-country-sentiment triple, as for a correct traduction and interpretation of foreing lyrics.
