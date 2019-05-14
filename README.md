@@ -228,19 +228,12 @@ Now we take a closer look to see wheter the individual result matches the overal
 The intuitive conclusion is that the **positive** feeling may be more relevant due to USA's frequency but if we look on further countries it is **anger** the one with the highest value.
 ![alt tex](/Memoria/Imagenes/country3.png)
 
-Some of the most relevant countries which have the higher frecuency of songs in our datasets are the following.
-
-![alt tex](/Memoria/Imagenes/USAsentiments.png)
-
-![alt tex](/Memoria/Imagenes/UKSentiments.png)
-
-![alt tex](/Memoria/Imagenes/SwedenSentiments.png)
+Some of other relevant countries which have the higher frecuency of songs in our datasets are the following. As mentioned, the average sentiment turns into anger the deeper we go into the country list.
 
 ![alt tex](/Memoria/Imagenes/Germany.png)
 
 ![alt tex](/Memoria/Imagenes/SpainSentiments.png)
 
-Again, the sentiments have been generalized into anger, positive or negative.
 
 # Conclusions And Future Work
 In conclusion, we have obtained a close summary of sentiments based on the most used words for each artist which has been grouped by the country of origin. We can now tell what the main theme of the songs in a certain country is.
