@@ -222,7 +222,7 @@ To conclude, we have extracted the most frecuent sentiment for each artist or ba
 
 Some of the most relevant countries which have the higher frecuency of songs in our datasets are the following.
 
-![alt tex](/Memoria/Imagenes/USASentiments.png)
+![alt tex](/Memoria/Imagenes/USAsentiments.png)
 
 ![alt tex](/Memoria/Imagenes/UKSentiments.png)
 
