@@ -149,10 +149,6 @@ The most used word is, as in the previous examples, *love*, which will give us a
 
 As it can be seen in the previous bar graph, the most frequent sentiment is *positive*, and it is followed by *joy*.
 
-To conclude, we have extracted the most frecuent sentiment for each artist or band in the dataset and we have shown in the following graph which are the feelings more frecuently used.
-
-![alt tex](/Memoria/Imagenes/most_frecuent_sentiments.png)
-
 ## Data Mining Algorithm
 ### Main Words And Sentiments
 A differentiation among all different words in every song for every artist is key to perform any other action over the dataset or reach a realistic conclusion. Implementing this function returns a list of words that appear in each song and belong to the dictionary. We can use such function to remove choirs and other words that may appear in the lyrics.
@@ -190,6 +186,10 @@ country <- extract_country_es(a, existing_countries_es, world.cities)
 country <- extract_country_en(a, existing_countries_en, world.cities)
 ```
 ## Results
+
+To conclude, we have extracted the most frecuent sentiment for each artist or band in the dataset and we have shown in the following graph which are the feelings more frecuently used.
+
+![alt tex](/Memoria/Imagenes/most_frecuent_sentiments.png)
 
 # Conclusions And Future Work
 In conclusion, we have obtained a close summary of sentiments based on the most used words for each artist which has been grouped by the country of origin. We can now tell what the main theme of the songs in a certain country is.
