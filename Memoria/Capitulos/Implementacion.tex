@@ -120,7 +120,7 @@ Finalmente, tras estudiar los gráficos obtenidos y ver que tiene sentido que la
 
 
 \section{Transformación de los datos}
-Para poder trabajar de manera eficiente y general con los datos no es suficiente con una estructura que los contenga a todos, ya que en R concretamente podemos encontrar algunas que trabajan con tipos de datos heterogéneos. Si bien los datos en bruto comparten el tipo \texbf{character}, el conjunto cuenta con caracteres específicos no comunes en el lenguaje habitual además de variar entre mayúsculas y minúsculas. Este último detalle es vital ya que para el reconocimiento de palabras, tanto para su análisis como su limpieza, la homogeneidad de los datos será fundamental.
+Para poder trabajar de manera eficiente y general con los datos no es suficiente con una estructura que los contenga a todos, ya que en R concretamente podemos encontrar algunas que trabajan con tipos de datos heterogéneos. Si bien los datos en bruto comparten el tipo \textbf{character}, el conjunto cuenta con caracteres específicos no comunes en el lenguaje habitual además de variar entre mayúsculas y minúsculas. Este último detalle es vital ya que para el reconocimiento de palabras, tanto para su análisis como su limpieza, la homogeneidad de los datos será fundamental.
 
 Tras trabajar con diferentes características homogéneas, concluimos que las letras de las canciones y sus títulos han de transformarse a minúsculas y el nombre de los artistas mantenerlo según la fuente para poder usarlo en búsquedas posteriores con técnicas de minería web.
 
@@ -133,9 +133,9 @@ Para conseguir extraer el sentimiento de las canciones utilizaremos diccionarios
 
 También necesitaremos extraer el pais de origen de cada artista, para ello utilizaremos técnicas de minería web para extraer dicha información de Wikipedia.
 
-\begin{figure}[h]
+\begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.7\linewidth]{Imagenes/diccionariosentimientos}
+	\includegraphics[width=0.6\linewidth]{Imagenes/diccionariosentimientos}
 	\caption{Diccioanrio con los sentimientos}
 	\label{fig:diccionariosentimientos}
 \end{figure}
@@ -146,16 +146,7 @@ A la hora de decidir cómo afrontar la clasificación de sentimientos [Hablar aq
 
 \section{Aplicación del algoritmo elegido}
 
-Para poder utilizar el diccionario de sentimientos primero necesitaremos descomponer las palabras que conforman las letras de las canciones, para ello utilizaremos la función de la Figura \ref{fig:get_existing_words}. Esta función iterará por todas las letras de las canciones y aquellas que estén presentes en el diccionario de sentimientos, las guardará. Como tiene que procesar cada palabra del total de 419887 canciones tiene un coste computacional muy elevado. Esto ha sido uno de los principales retos con los que nos hemos encontrado, ya que no podíamos ejecutar el algoritmo en cada iteración ya que tardaba muchas horas en realizarlo, para ello fuimos cogiendo pequeñas partes del data set a modo de pruebas para comprobar que los resultados eran satisfactorios.
-
-El diccionario que usaremos está indicado en la Figura \ref{fig:word_sentiments}. Ahora organizaremos las 419887 entradas por autores y tendremos un data frame resultante indicado en la figura \ref{fig:artistlyrics-dataframe}
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.7\linewidth]{Imagenes/artistlyrics-dataframe}
-	\caption{Data frame resultante con los artistas agrupados con sus letras de las canciones}
-	\label{fig:artistlyrics-dataframe}
-\end{figure}
+Para poder utilizar el diccionario de sentimientos primero necesitaremos descomponer las palabras que conforman las letras de las canciones, para ello utilizaremos la función de la Figura \ref{fig:get_existing_words}. 
 
 \begin{figure}[h]
 	\centering
@@ -164,11 +155,25 @@ El diccionario que usaremos está indicado en la Figura \ref{fig:word_sentiments
 	\label{fig:get_existing_words}
 \end{figure}
 
+Esta función iterará por todas las letras de las canciones y aquellas que estén presentes en el diccionario de sentimientos, las guardará. Como tiene que procesar cada palabra del total de 419887 canciones tiene un coste computacional muy elevado. Esto ha sido uno de los principales retos con los que nos hemos encontrado, ya que no podíamos ejecutar el algoritmo en cada iteración ya que tardaba muchas horas en realizarlo, para ello fuimos cogiendo pequeñas partes del data set a modo de pruebas para comprobar que los resultados eran satisfactorios.
+
+El diccionario que usaremos está indicado en la Figura \ref{fig:word_sentiments}.
+
+
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.7\linewidth]{Imagenes/word_sentiments}
 	\caption{Diccionario que usaremos para la asignación de sentimientos}
 	\label{fig:word_sentiments}
+\end{figure}
+
+ Ahora organizaremos las 419887 entradas por autores y tendremos un data frame resultante indicado en la figura \ref{fig:artistlyrics-dataframe}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.9\linewidth]{Imagenes/artistlyrics-dataframe}
+	\caption{Data frame resultante con los artistas agrupados con sus letras de las canciones}
+	\label{fig:artistlyrics-dataframe}
 \end{figure}
 
 Con toda la información ordenada ya podemos asignar el sentimiento principal de cada artista con la función de la Figura \ref{fig:lista-sentimientos}. Esta función devolverá una lista de palabras, que serán los sentimientos, con la cual elaboraremos el data frame que asigna a cada artista el sentimiento principal tal y como se ve en la Figura \ref{fig:artista-sentimiento}.
@@ -177,7 +182,7 @@ Una vez tenemos listo el diccionario podemos asignar a cada palabra de las letra
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.7\linewidth]{Imagenes/lista-sentimientos}
+	\includegraphics[width=\linewidth]{Imagenes/lista-sentimientos}
 	\caption{Función para obtener los sentimientos de las palabras}
 	\label{fig:lista-sentimientos}
 \end{figure}
@@ -190,9 +195,7 @@ Una vez tenemos listo el diccionario podemos asignar a cada palabra de las letra
 \end{figure}
 
 
-La parte final será pues, obtener el país correspondiente de cada artista, para ello hemos utilizado técnicas de minería web. Vamos a utilizar Wikipedia como fuente para obtener el pais correspondiente, para ello, como la URL puede estar en diferentes formatos tenemos que obtener las distintas formas tal y como se indica en la Figura \ref{fig:artists-wikipedia}. Después, con la función de la Figura \ref{fig:link-exists} podremos saber cual de los links que hemos generado es el válido. Ese link, lo usaremos para finalmente obtener el artista, pero comprobaremos tanto la fuente en inglés como en español por si algún artista no tiene página en wikipedia en el otro idioma Figura \ref{fig:asignar-oais}
-
-Con esta nueva información generamos dos data frames, el primero de la Figura \ref{fig:artistcountry} donde tendremos el artista junto con su cantidad de canciones y el pais correspondiente y el data set final de la Figura \ref{fig:sentimenttablebycountry} donde tenemos toda la información que necesitamos para inferir cual es el sentimiento general de cada país.
+La parte final será pues, obtener el país correspondiente de cada artista, para ello hemos utilizado técnicas de minería web. Vamos a utilizar Wikipedia como fuente para obtener el pais correspondiente, para ello, como la URL puede estar en diferentes formatos tenemos que obtener las distintas formas tal y como se indica en la Figura \ref{fig:artists-wikipedia}. 
 
 \begin{figure}[h]
 	\centering
@@ -201,6 +204,8 @@ Con esta nueva información generamos dos data frames, el primero de la Figura \
 	\label{fig:artists-wikipedia}
 \end{figure}
 
+Después, con la función de la Figura \ref{fig:link-exists} podremos saber cual de los links que hemos generado es el válido. 
+
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.7\linewidth]{Imagenes/link-exists}
@@ -208,12 +213,16 @@ Con esta nueva información generamos dos data frames, el primero de la Figura \
 	\label{fig:link-exists}
 \end{figure}
 
+Ese link, lo usaremos para finalmente obtener el artista, pero comprobaremos tanto la fuente en inglés como en español por si algún artista no tiene página en wikipedia en el otro idioma, de la forma mostrada en la Figura \ref{fig:asignar-oais}.
+
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.7\linewidth]{Imagenes/asignar-oais}
 	\caption{Extraer el pais adecuado de Wikipedia}
 	\label{fig:asignar-oais}
 \end{figure}
+
+Con esta nueva información generamos dos data frames, el primero de la Figura \ref{fig:artistcountry} donde tendremos el artista junto con su cantidad de canciones y el pais correspondiente y el data set final de la Figura \ref{fig:sentimenttablebycountry} donde tenemos toda la información que necesitamos para inferir cual es el sentimiento general de cada país.
 
 \begin{figure}[h]
 	\centering
@@ -231,8 +240,8 @@ Con esta nueva información generamos dos data frames, el primero de la Figura \
 
 \section{Interpretación de los resultados}
 
-Esto es el Capítulo 5
+La interpretación de los resultados obtenidos se encuentra en el Capítulo \ref{cap:resultadosyevaluacion}.
 
 \section{Aplicación de los resultados obtenidos}
 
-Esto es el Capítulo 6
+La aplicación de los resultados obtenidos está desarrollada en el Capítulo \ref{cap:conclusiones}.
