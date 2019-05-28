@@ -43,7 +43,7 @@ El dataframe resultante contendrá, pues, 3 columnas indicando el grupo, la canc
 	\label{fig:datasetDataCleaning}
 \end{figure}
 
-También hemos tenido que eliminar los carácteres raros que no se encuentren en el diccionario en inglés (y también las palabras que los contienen) ya que no nos serán útiles para analizar el sentimiento de las canciones. Para ello utilizaremos funciones basadas en la librería  \textit{"qdapDictionaries"}. En este caso, como se puede ver en la figura \ref{fig:isWord}, la cual devolverá si la palabra introducida como parámetro está en inglés o español.
+Hemos tenido que eliminar los carácteres raros que no se encuentren en el diccionario en inglés (y también las palabras que los contienen) ya que no nos serán útiles para analizar el sentimiento de las canciones. Para ello utilizaremos funciones basadas en la librería  \textit{"qdapDictionaries"}. En este caso, como se puede ver en la figura \ref{fig:isWord}, la cual devolverá si la palabra introducida como parámetro está en inglés o español.
 
 \begin{figure}[h]
 	\centering
@@ -61,7 +61,7 @@ Crearemos un data frame en el que tendremos disponible la cantidad de canciones 
 	\label{fig:artistsDatframe}
 \end{figure}
 
-También para falcilitar el trabajo a la hora de identificar el nombre de los artistas, normalizaremos el nombre de los grupos para que tengan todos la misma forma. Figura \ref{fig:artistsStand}
+Para facilitar el trabajo a la hora de identificar el nombre de los artistas, normalizaremos el nombre de los grupos para que tengan todos la misma forma. Figura \ref{fig:artistsStand}
 
 \begin{figure}[h]
 	\centering
@@ -140,9 +140,11 @@ También necesitaremos extraer el pais de origen de cada artista, para ello util
 	\label{fig:diccionariosentimientos}
 \end{figure}
 
-\section{Eleección del algoritmo de minería de datos}
+\section{Elección del algoritmo de minería de datos}
 
-A la hora de decidir cómo afrontar la clasificación de sentimientos [Hablar aquí de que intentamos usar clustering pero que al final no lo hicimos]
+A la hora de decidir cómo afrontar la clasificación de sentimientos una de las opciones que barajamos fue usar el clustering para saber si podíamos agrupar el conjunto de datos en base al sentimieno predominante. 
+
+Para ello aplicamos el método "K-Means" sobre el dataframe que veremos más adelante que agrupa los sentimientos de los países. Con tres clusters no nos aportó resultados relevantes. Después probamos con "DIANA" para dejar al algoritmo decidir, pero tampoco conseguimos gran cosa. Por ello decidimos afrontar el problema con la mentalidad de abarcar todo el dataset, para ello, en la siguiente sección explicaremos todos los pasos ejecutados.
 
 \section{Aplicación del algoritmo elegido}
 
@@ -237,11 +239,3 @@ Con esta nueva información generamos dos data frames, el primero de la Figura \
 	\caption{Data frame con los sentimientos de las canciones de cada país}
 	\label{fig:sentimenttablebycountry}
 \end{figure}
-
-\section{Interpretación de los resultados}
-
-La interpretación de los resultados obtenidos se encuentra en el Capítulo \ref{cap:resultadosyevaluacion}.
-
-\section{Aplicación de los resultados obtenidos}
-
-La aplicación de los resultados obtenidos está desarrollada en el Capítulo \ref{cap:conclusiones}.
