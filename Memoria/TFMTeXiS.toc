@@ -10,9 +10,7 @@
 \contentsline {section}{\numberline {4.3}Limpieza y preprocesamiento de los datos}{8}{section.12}
 \contentsline {section}{\numberline {4.4}Transformaci\IeC {\'o}n de los datos}{10}{section.24}
 \contentsline {section}{\numberline {4.5}Elecci\IeC {\'o}n de la tarea de minado adecuada}{12}{section.25}
-\contentsline {section}{\numberline {4.6}Eleecci\IeC {\'o}n del algoritmo de miner\IeC {\'\i }a de datos}{13}{section.27}
+\contentsline {section}{\numberline {4.6}Elecci\IeC {\'o}n del algoritmo de miner\IeC {\'\i }a de datos}{13}{section.27}
 \contentsline {section}{\numberline {4.7}Aplicaci\IeC {\'o}n del algoritmo elegido}{14}{section.28}
-\contentsline {section}{\numberline {4.8}Interpretaci\IeC {\'o}n de los resultados}{16}{section.39}
-\contentsline {section}{\numberline {4.9}Aplicaci\IeC {\'o}n de los resultados obtenidos}{17}{section.40}
-\contentsline {chapter}{\numberline {5}Resultados y Evaluaci\IeC {\'o}n}{19}{chapter.41}
-\contentsline {chapter}{\numberline {6}Conclusiones y Trabajo Futuro}{23}{chapter.48}
+\contentsline {chapter}{\numberline {5}Resultados y Evaluaci\IeC {\'o}n}{19}{chapter.39}
+\contentsline {chapter}{\numberline {6}Conclusiones y Trabajo Futuro}{23}{chapter.46}
